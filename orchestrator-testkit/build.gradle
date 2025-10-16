@@ -1,0 +1,12 @@
+// orchestrator-testkit: Contract Tests for adapter validation
+
+description = 'Orchestrator TestKit - Contract tests for adapter implementations'
+
+dependencies {
+    api project(':orchestrator-core')
+
+    // JUnit 5 as API (테스트킷 사용자가 의존)
+    api platform('org.junit:junit-bom:5.10.1')
+    api 'org.junit.jupiter:junit-jupiter-api'
+    api 'org.assertj:assertj-core:3.24.2'
+}

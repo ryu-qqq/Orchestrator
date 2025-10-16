@@ -1,0 +1,5 @@
+rootProject.name = 'orchestrator'
+
+include 'orchestrator-core'
+include 'orchestrator-testkit'
+include 'orchestrator-adapter-inmemory'

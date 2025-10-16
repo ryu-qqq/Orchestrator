@@ -1,0 +1,7 @@
+// orchestrator-core: 순수 Core SDK (구체 기술 미포함)
+
+description = 'Orchestrator Core SDK - Hexagonal Architecture based workflow orchestration'
+
+dependencies {
+    // No additional dependencies - keep core pure
+}

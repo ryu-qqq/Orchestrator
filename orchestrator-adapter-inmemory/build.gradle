@@ -1,0 +1,9 @@
+// orchestrator-adapter-inmemory: Reference implementation (선택적)
+
+description = 'Orchestrator Adapter In-Memory - Reference adapter implementation'
+
+dependencies {
+    implementation project(':orchestrator-core')
+
+    testImplementation project(':orchestrator-testkit')
+}
