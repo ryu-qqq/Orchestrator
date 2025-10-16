@@ -1,4 +1,4 @@
-package io.orchestrator.core;
+package com.ryuqq.orchestrator.core;
 
 import org.junit.jupiter.api.Test;
 

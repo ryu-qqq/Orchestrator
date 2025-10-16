@@ -24,7 +24,7 @@ Orchestrator는 외부 API(결제, 파일, 써드파티 등)가 개입하는 플
 orchestrator/
 ├── orchestrator-core/              # Core SDK (순수 계약)
 │   ├── src/main/java/
-│   │   └── io/orchestrator/core/
+│   │   └── com/ryuqq/orchestrator/core/
 │   │       ├── api/                # Orchestrator, Executor, Runtime
 │   │       ├── model/              # OpId, Command, Outcome 등
 │   │       ├── spi/                # Store, Bus, Protection SPI
@@ -33,13 +33,13 @@ orchestrator/
 │
 ├── orchestrator-testkit/           # Contract Tests
 │   ├── src/main/java/
-│   │   └── io/orchestrator/testkit/
+│   │   └── com/ryuqq/orchestrator/testkit/
 │   │       └── contracts/          # 7가지 시나리오
 │   └── build.gradle
 │
 ├── orchestrator-adapter-inmemory/  # 레퍼런스 어댑터 (선택적)
 │   ├── src/main/java/
-│   │   └── io/orchestrator/adapter/inmemory/
+│   │   └── com/ryuqq/orchestrator/adapter/inmemory/
 │   │       ├── store/              # InMemoryStore
 │   │       ├── bus/                # InMemoryBus
 │   │       └── protection/         # 샘플 Protection

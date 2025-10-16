@@ -3,7 +3,7 @@ plugins {
 }
 
 allprojects {
-    group = 'io.orchestrator'
+    group = 'com.ryuqq'
     version = '0.1.0-SNAPSHOT'
 
     repositories {
