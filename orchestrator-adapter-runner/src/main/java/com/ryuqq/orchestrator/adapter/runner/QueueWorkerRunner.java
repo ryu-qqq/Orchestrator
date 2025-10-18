@@ -70,7 +70,7 @@ public final class QueueWorkerRunner implements Runtime {
     private final ExecutorService workerExecutor;
 
     /**
-     * 생성자.
+     * 생성자 (기본 BackoffCalculator 사용).
      *
      * @param bus 메시지 버스
      * @param store 저장소
@@ -79,6 +79,20 @@ public final class QueueWorkerRunner implements Runtime {
      * @throws IllegalArgumentException 의존성이 null인 경우
      */
     public QueueWorkerRunner(Bus bus, Store store, Executor executor, QueueWorkerConfig config) {
+        this(bus, store, executor, config, new BackoffCalculator());
+    }
+
+    /**
+     * 생성자 (커스텀 BackoffCalculator 주입).
+     *
+     * @param bus 메시지 버스
+     * @param store 저장소
+     * @param executor 작업 실행자
+     * @param config 설정
+     * @param backoffCalculator 백오프 계산기
+     * @throws IllegalArgumentException 의존성이 null인 경우
+     */
+    public QueueWorkerRunner(Bus bus, Store store, Executor executor, QueueWorkerConfig config, BackoffCalculator backoffCalculator) {
         if (bus == null) {
             throw new IllegalArgumentException("bus cannot be null");
         }
@@ -91,12 +105,15 @@ public final class QueueWorkerRunner implements Runtime {
         if (config == null) {
             throw new IllegalArgumentException("config cannot be null");
         }
+        if (backoffCalculator == null) {
+            throw new IllegalArgumentException("backoffCalculator cannot be null");
+        }
 
         this.bus = bus;
         this.store = store;
         this.executor = executor;
         this.config = config;
-        this.backoffCalculator = new BackoffCalculator();
+        this.backoffCalculator = backoffCalculator;
         this.workerExecutor = Executors.newFixedThreadPool(config.getConcurrency());
     }
 
