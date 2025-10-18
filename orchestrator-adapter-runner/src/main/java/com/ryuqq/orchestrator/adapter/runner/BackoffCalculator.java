@@ -8,16 +8,16 @@ package com.ryuqq.orchestrator.adapter.runner;
  *
  * <p><strong>알고리즘:</strong></p>
  * <pre>
- * delay = min(baseDelay * 2^attemptCount + jitter, maxDelay)
+ * delay = min(baseDelay * 2^(attemptCount-1) + jitter, maxDelay)
  * jitter = random(0, exponential * jitterFactor)
  * </pre>
  *
  * <p><strong>예시 (baseDelay=1000ms, jitterFactor=0.1):</strong></p>
  * <ul>
- *   <li>attemptCount=1: 1000ms + jitter(0-100ms) = 1000-1100ms</li>
- *   <li>attemptCount=2: 2000ms + jitter(0-200ms) = 2000-2200ms</li>
- *   <li>attemptCount=3: 4000ms + jitter(0-400ms) = 4000-4400ms</li>
- *   <li>attemptCount=10: 1024000ms (capped at maxDelay=300000ms)</li>
+ *   <li>attemptCount=1: 1000ms + jitter(0-100ms) = 1000-1100ms (2^0 * base)</li>
+ *   <li>attemptCount=2: 2000ms + jitter(0-200ms) = 2000-2200ms (2^1 * base)</li>
+ *   <li>attemptCount=3: 4000ms + jitter(0-400ms) = 4000-4400ms (2^2 * base)</li>
+ *   <li>attemptCount=10: 512000ms (capped at maxDelay=300000ms) (2^9 * base)</li>
  * </ul>
  *
  * @author Orchestrator Team
@@ -25,9 +25,48 @@ package com.ryuqq.orchestrator.adapter.runner;
  */
 public class BackoffCalculator {
 
-    private static final long BASE_DELAY_MS = 1000;      // 1초
-    private static final long MAX_DELAY_MS = 300000;     // 5분
-    private static final double JITTER_FACTOR = 0.1;     // 10% jitter
+    private final long baseDelayMs;
+    private final long maxDelayMs;
+    private final double jitterFactor;
+
+    /**
+     * 기본 설정으로 생성.
+     *
+     * <p>기본값: baseDelay=1000ms, maxDelay=300000ms, jitterFactor=0.1</p>
+     */
+    public BackoffCalculator() {
+        this(1000, 300000, 0.1);
+    }
+
+    /**
+     * 커스텀 설정으로 생성.
+     *
+     * @param baseDelayMs 기본 지연 시간 (밀리초, 양수여야 함)
+     * @param maxDelayMs 최대 지연 시간 (밀리초, baseDelayMs 이상이어야 함)
+     * @param jitterFactor Jitter 비율 (0.0 ~ 1.0)
+     * @throws IllegalArgumentException 파라미터 검증 실패 시
+     */
+    public BackoffCalculator(long baseDelayMs, long maxDelayMs, double jitterFactor) {
+        if (baseDelayMs <= 0) {
+            throw new IllegalArgumentException(
+                "baseDelayMs must be positive (current: " + baseDelayMs + ")"
+            );
+        }
+        if (maxDelayMs < baseDelayMs) {
+            throw new IllegalArgumentException(
+                "maxDelayMs must be >= baseDelayMs (base: " + baseDelayMs + ", max: " + maxDelayMs + ")"
+            );
+        }
+        if (jitterFactor < 0.0 || jitterFactor > 1.0) {
+            throw new IllegalArgumentException(
+                "jitterFactor must be between 0.0 and 1.0 (current: " + jitterFactor + ")"
+            );
+        }
+
+        this.baseDelayMs = baseDelayMs;
+        this.maxDelayMs = maxDelayMs;
+        this.jitterFactor = jitterFactor;
+    }
 
     /**
      * 재시도 지연 시간 계산.
@@ -47,16 +86,17 @@ public class BackoffCalculator {
         }
 
         // 1. 지수적 백오프 (overflow 방지를 위해 min 적용)
+        // attemptCount=1일 때 baseDelayMs, attemptCount=2일 때 2*baseDelayMs, ...
         long exponential = Math.min(
-            BASE_DELAY_MS * (1L << attemptCount),
-            MAX_DELAY_MS
+            baseDelayMs * (1L << (attemptCount - 1)),
+            maxDelayMs
         );
 
         // 2. Jitter 추가 (0 ~ exponential * jitterFactor)
-        long jitter = (long) (exponential * JITTER_FACTOR * Math.random());
+        long jitter = (long) (exponential * jitterFactor * Math.random());
 
         // 3. 최대값 제한
-        return Math.min(exponential + jitter, MAX_DELAY_MS);
+        return Math.min(exponential + jitter, maxDelayMs);
     }
 
     /**
@@ -65,7 +105,7 @@ public class BackoffCalculator {
      * @return 기본 지연 시간 (밀리초)
      */
     public long getBaseDelayMs() {
-        return BASE_DELAY_MS;
+        return baseDelayMs;
     }
 
     /**
@@ -74,7 +114,7 @@ public class BackoffCalculator {
      * @return 최대 지연 시간 (밀리초)
      */
     public long getMaxDelayMs() {
-        return MAX_DELAY_MS;
+        return maxDelayMs;
     }
 
     /**
@@ -83,6 +123,6 @@ public class BackoffCalculator {
      * @return Jitter 비율 (0.0 ~ 1.0)
      */
     public double getJitterFactor() {
-        return JITTER_FACTOR;
+        return jitterFactor;
     }
 }

@@ -4,4 +4,7 @@ dependencies {
 
     // orchestrator-core 모듈 의존성 (transitive)
     implementation project(':orchestrator-core')
+
+    // SLF4J 로깅
+    implementation 'org.slf4j:slf4j-api:2.0.9'
 }

@@ -2,6 +2,8 @@ package com.ryuqq.orchestrator.adapter.runner;
 
 import com.ryuqq.orchestrator.application.runtime.Runtime;
 import com.ryuqq.orchestrator.core.contract.Envelope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.ryuqq.orchestrator.core.executor.Executor;
 import com.ryuqq.orchestrator.core.model.OpId;
 import com.ryuqq.orchestrator.core.outcome.Fail;
@@ -13,6 +15,9 @@ import com.ryuqq.orchestrator.core.spi.Store;
 import com.ryuqq.orchestrator.core.statemachine.OperationState;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Queue Worker Runner 구현체.
@@ -57,6 +62,7 @@ import java.util.List;
  */
 public final class QueueWorkerRunner implements Runtime {
 
+    private static final Logger log = LoggerFactory.getLogger(QueueWorkerRunner.class);
     private static final long DEFAULT_POLLING_INTERVAL_MS = 10;
 
     private final Bus bus;
@@ -64,9 +70,10 @@ public final class QueueWorkerRunner implements Runtime {
     private final Executor executor;
     private final QueueWorkerConfig config;
     private final BackoffCalculator backoffCalculator;
+    private final ExecutorService workerExecutor;
 
     /**
-     * 생성자.
+     * 생성자 (기본 BackoffCalculator 사용).
      *
      * @param bus 메시지 버스
      * @param store 저장소
@@ -75,6 +82,20 @@ public final class QueueWorkerRunner implements Runtime {
      * @throws IllegalArgumentException 의존성이 null인 경우
      */
     public QueueWorkerRunner(Bus bus, Store store, Executor executor, QueueWorkerConfig config) {
+        this(bus, store, executor, config, new BackoffCalculator());
+    }
+
+    /**
+     * 생성자 (커스텀 BackoffCalculator 주입).
+     *
+     * @param bus 메시지 버스
+     * @param store 저장소
+     * @param executor 작업 실행자
+     * @param config 설정
+     * @param backoffCalculator 백오프 계산기
+     * @throws IllegalArgumentException 의존성이 null인 경우
+     */
+    public QueueWorkerRunner(Bus bus, Store store, Executor executor, QueueWorkerConfig config, BackoffCalculator backoffCalculator) {
         if (bus == null) {
             throw new IllegalArgumentException("bus cannot be null");
         }
@@ -87,22 +108,41 @@ public final class QueueWorkerRunner implements Runtime {
         if (config == null) {
             throw new IllegalArgumentException("config cannot be null");
         }
+        if (backoffCalculator == null) {
+            throw new IllegalArgumentException("backoffCalculator cannot be null");
+        }
 
         this.bus = bus;
         this.store = store;
         this.executor = executor;
         this.config = config;
-        this.backoffCalculator = new BackoffCalculator();
+        this.backoffCalculator = backoffCalculator;
+        this.workerExecutor = Executors.newFixedThreadPool(config.concurrency());
     }
 
     @Override
     public void pump() {
         // 1. 메시지 큐에서 배치 dequeue
-        List<Envelope> envelopes = bus.dequeue(config.getBatchSize());
+        List<Envelope> envelopes = bus.dequeue(config.batchSize());
 
-        // 2. 각 Envelope 처리
+        // 2. 각 Envelope을 병렬 처리 (ExecutorService에 제출)
         for (Envelope envelope : envelopes) {
-            processEnvelope(envelope);
+            workerExecutor.submit(() -> processEnvelope(envelope));
+        }
+    }
+
+    /**
+     * Runner 종료 (리소스 정리).
+     *
+     * <p>ExecutorService를 graceful shutdown하여 진행 중인 작업이
+     * 완료되도록 대기합니다.</p>
+     *
+     * @throws InterruptedException shutdown 대기 중 인터럽트 발생 시
+     */
+    public void shutdown() throws InterruptedException {
+        workerExecutor.shutdown();
+        if (!workerExecutor.awaitTermination(60, TimeUnit.SECONDS)) {
+            workerExecutor.shutdownNow();
         }
     }
 
@@ -171,7 +211,7 @@ public final class QueueWorkerRunner implements Runtime {
             store.finalize(opId, OperationState.COMPLETED);
         } catch (Exception e) {
             // 로그만 남기고 계속 진행 (Finalizer가 처리)
-            System.err.println("[WARN] finalize failed for " + opId + ", will be handled by Finalizer: " + e.getMessage());
+            log.warn("finalize failed for {}, will be handled by Finalizer", opId, e);
         }
     }
 
@@ -188,16 +228,15 @@ public final class QueueWorkerRunner implements Runtime {
     private void handleRetry(OpId opId, Retry retry, Envelope envelope) {
         int attemptCount = retry.attemptCount();
 
-        if (attemptCount < config.getMaxRetries()) {
+        if (attemptCount < config.maxRetries()) {
             // 재시도 가능
             long delay = backoffCalculator.calculate(attemptCount);
             bus.publish(envelope, delay);
-            System.out.println("[INFO] Retry scheduled for " + opId +
-                " after " + delay + "ms (attempt " + attemptCount + ")");
+            log.info("Retry scheduled for {} after {}ms (attempt {})", opId, delay, attemptCount);
         } else {
             // RetryBudget 소진
             store.finalize(opId, OperationState.FAILED);
-            System.err.println("[WARN] RetryBudget exhausted for " + opId + ", marked as FAILED");
+            log.warn("RetryBudget exhausted for {}, marked as FAILED", opId);
         }
     }
 
@@ -213,11 +252,10 @@ public final class QueueWorkerRunner implements Runtime {
     private void handleFail(OpId opId, Fail fail, Envelope envelope) {
         // 1. 즉시 실패 처리
         store.finalize(opId, OperationState.FAILED);
-        System.err.println("[ERROR] Operation " + opId + " failed: " +
-            fail.errorCode() + " - " + fail.message());
+        log.error("Operation {} failed: {} - {}", opId, fail.errorCode(), fail.message());
 
         // 2. DLQ 전송 (선택적)
-        if (config.isDlqEnabled()) {
+        if (config.dlqEnabled()) {
             bus.publishToDLQ(envelope, fail);
         }
     }
@@ -235,7 +273,7 @@ public final class QueueWorkerRunner implements Runtime {
      */
     private void pollForCompletion(OpId opId) {
         long startTimeNanos = System.nanoTime();
-        long timeoutNanos = config.getMaxProcessingTimeMs() * 1_000_000L;
+        long timeoutNanos = config.maxProcessingTimeMs() * 1_000_000L;
 
         while (System.nanoTime() - startTimeNanos < timeoutNanos) {
             OperationState state = executor.getState(opId);
@@ -250,7 +288,7 @@ public final class QueueWorkerRunner implements Runtime {
 
         // 타임아웃
         throw new RuntimeException("Operation " + opId + " timed out after " +
-            config.getMaxProcessingTimeMs() + "ms");
+            config.maxProcessingTimeMs() + "ms");
     }
 
     /**

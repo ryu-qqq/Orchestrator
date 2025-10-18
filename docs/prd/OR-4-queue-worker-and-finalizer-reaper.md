@@ -617,7 +617,7 @@ public final class QueueWorkerRunner implements Runtime {
         }
     }
 
-    private void handleFail(OpId opId, Fail fail) {
+    private void handleFail(OpId opId, Fail fail, Envelope envelope) {
         // 즉시 실패 처리
         store.finalize(opId, OperationState.FAILED);
         logger.error("Operation {} failed: {} - {}",

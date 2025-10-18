@@ -1,9 +1,9 @@
 package com.ryuqq.orchestrator.adapter.runner;
 
 /**
- * QueueWorkerRunner 설정.
+ * QueueWorkerRunner 설정 (불변 record).
  *
- * <p>이 클래스는 QueueWorkerRunner의 동작을 제어하는 설정값을 담고 있습니다.</p>
+ * <p>이 record는 QueueWorkerRunner의 동작을 제어하는 설정값을 담고 있습니다.</p>
  *
  * <p><strong>설정 항목:</strong></p>
  * <ul>
@@ -24,154 +24,104 @@ package com.ryuqq.orchestrator.adapter.runner;
  *
  * @author Orchestrator Team
  * @since 1.0.0
+ * @param pollingIntervalMs 큐 폴링 간격 (밀리초, 양수여야 함)
+ * @param batchSize 배치 크기 (1 이상이어야 함)
+ * @param concurrency 동시 처리 스레드 수 (1 이상이어야 함)
+ * @param maxProcessingTimeMs 최대 처리 시간 (밀리초, 양수여야 함)
+ * @param maxRetries 최대 재시도 횟수 (1 이상이어야 함)
+ * @param dlqEnabled DLQ 전송 활성화 여부
  */
-public class QueueWorkerConfig {
+public record QueueWorkerConfig(
+    long pollingIntervalMs,
+    int batchSize,
+    int concurrency,
+    long maxProcessingTimeMs,
+    int maxRetries,
+    boolean dlqEnabled
+) {
 
-    private long pollingIntervalMs = 100;
-    private int batchSize = 10;
-    private int concurrency = 5;
-    private long maxProcessingTimeMs = 30000;
-    private int maxRetries = 3;
-    private boolean dlqEnabled = true;
-
+    /**
+     * 기본 설정 생성자.
+     *
+     * <p>기본값: pollingIntervalMs=100ms, batchSize=10, concurrency=5,
+     * maxProcessingTimeMs=30000ms, maxRetries=3, dlqEnabled=true</p>
+     */
     public QueueWorkerConfig() {
+        this(100, 10, 5, 30000, 3, true);
     }
 
     /**
-     * 큐 폴링 간격 조회.
+     * Compact constructor (유효성 검증).
      *
-     * @return 폴링 간격 (밀리초)
+     * @throws IllegalArgumentException 파라미터 검증 실패 시
      */
-    public long getPollingIntervalMs() {
-        return pollingIntervalMs;
-    }
-
-    /**
-     * 큐 폴링 간격 설정.
-     *
-     * @param pollingIntervalMs 폴링 간격 (밀리초, 양수여야 함)
-     * @throws IllegalArgumentException pollingIntervalMs가 양수가 아닌 경우
-     */
-    public void setPollingIntervalMs(long pollingIntervalMs) {
+    public QueueWorkerConfig {
         if (pollingIntervalMs <= 0) {
             throw new IllegalArgumentException(
                 "pollingIntervalMs must be positive (current: " + pollingIntervalMs + ")"
             );
         }
-        this.pollingIntervalMs = pollingIntervalMs;
-    }
-
-    /**
-     * 배치 크기 조회.
-     *
-     * @return 배치 크기 (한 번에 dequeue할 메시지 수)
-     */
-    public int getBatchSize() {
-        return batchSize;
-    }
-
-    /**
-     * 배치 크기 설정.
-     *
-     * @param batchSize 배치 크기 (1 이상이어야 함)
-     * @throws IllegalArgumentException batchSize가 양수가 아닌 경우
-     */
-    public void setBatchSize(int batchSize) {
         if (batchSize <= 0) {
             throw new IllegalArgumentException(
                 "batchSize must be positive (current: " + batchSize + ")"
             );
         }
-        this.batchSize = batchSize;
-    }
-
-    /**
-     * 동시 처리 스레드 수 조회.
-     *
-     * @return 동시 처리 스레드 수
-     */
-    public int getConcurrency() {
-        return concurrency;
-    }
-
-    /**
-     * 동시 처리 스레드 수 설정.
-     *
-     * @param concurrency 동시 처리 스레드 수 (1 이상이어야 함)
-     * @throws IllegalArgumentException concurrency가 양수가 아닌 경우
-     */
-    public void setConcurrency(int concurrency) {
         if (concurrency <= 0) {
             throw new IllegalArgumentException(
                 "concurrency must be positive (current: " + concurrency + ")"
             );
         }
-        this.concurrency = concurrency;
-    }
-
-    /**
-     * 최대 처리 시간 조회.
-     *
-     * @return 최대 처리 시간 (밀리초)
-     */
-    public long getMaxProcessingTimeMs() {
-        return maxProcessingTimeMs;
-    }
-
-    /**
-     * 최대 처리 시간 설정.
-     *
-     * @param maxProcessingTimeMs 최대 처리 시간 (밀리초, 양수여야 함)
-     * @throws IllegalArgumentException maxProcessingTimeMs가 양수가 아닌 경우
-     */
-    public void setMaxProcessingTimeMs(long maxProcessingTimeMs) {
         if (maxProcessingTimeMs <= 0) {
             throw new IllegalArgumentException(
                 "maxProcessingTimeMs must be positive (current: " + maxProcessingTimeMs + ")"
             );
         }
-        this.maxProcessingTimeMs = maxProcessingTimeMs;
-    }
-
-    /**
-     * 최대 재시도 횟수 조회.
-     *
-     * @return 최대 재시도 횟수
-     */
-    public int getMaxRetries() {
-        return maxRetries;
-    }
-
-    /**
-     * 최대 재시도 횟수 설정.
-     *
-     * @param maxRetries 최대 재시도 횟수 (1 이상이어야 함)
-     * @throws IllegalArgumentException maxRetries가 양수가 아닌 경우
-     */
-    public void setMaxRetries(int maxRetries) {
         if (maxRetries <= 0) {
             throw new IllegalArgumentException(
                 "maxRetries must be positive (current: " + maxRetries + ")"
             );
         }
-        this.maxRetries = maxRetries;
     }
 
     /**
-     * DLQ 전송 활성화 여부 조회.
-     *
-     * @return DLQ 전송 활성화 여부
+     * pollingIntervalMs만 변경한 새 인스턴스 생성.
      */
-    public boolean isDlqEnabled() {
-        return dlqEnabled;
+    public QueueWorkerConfig withPollingIntervalMs(long pollingIntervalMs) {
+        return new QueueWorkerConfig(pollingIntervalMs, batchSize, concurrency, maxProcessingTimeMs, maxRetries, dlqEnabled);
     }
 
     /**
-     * DLQ 전송 활성화 여부 설정.
-     *
-     * @param dlqEnabled DLQ 전송 활성화 여부
+     * batchSize만 변경한 새 인스턴스 생성.
      */
-    public void setDlqEnabled(boolean dlqEnabled) {
-        this.dlqEnabled = dlqEnabled;
+    public QueueWorkerConfig withBatchSize(int batchSize) {
+        return new QueueWorkerConfig(pollingIntervalMs, batchSize, concurrency, maxProcessingTimeMs, maxRetries, dlqEnabled);
+    }
+
+    /**
+     * concurrency만 변경한 새 인스턴스 생성.
+     */
+    public QueueWorkerConfig withConcurrency(int concurrency) {
+        return new QueueWorkerConfig(pollingIntervalMs, batchSize, concurrency, maxProcessingTimeMs, maxRetries, dlqEnabled);
+    }
+
+    /**
+     * maxProcessingTimeMs만 변경한 새 인스턴스 생성.
+     */
+    public QueueWorkerConfig withMaxProcessingTimeMs(long maxProcessingTimeMs) {
+        return new QueueWorkerConfig(pollingIntervalMs, batchSize, concurrency, maxProcessingTimeMs, maxRetries, dlqEnabled);
+    }
+
+    /**
+     * maxRetries만 변경한 새 인스턴스 생성.
+     */
+    public QueueWorkerConfig withMaxRetries(int maxRetries) {
+        return new QueueWorkerConfig(pollingIntervalMs, batchSize, concurrency, maxProcessingTimeMs, maxRetries, dlqEnabled);
+    }
+
+    /**
+     * dlqEnabled만 변경한 새 인스턴스 생성.
+     */
+    public QueueWorkerConfig withDlqEnabled(boolean dlqEnabled) {
+        return new QueueWorkerConfig(pollingIntervalMs, batchSize, concurrency, maxProcessingTimeMs, maxRetries, dlqEnabled);
     }
 }
