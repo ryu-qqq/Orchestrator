@@ -1,0 +1,4 @@
+dependencies {
+    // orchestrator-core 모듈 의존성
+    api project(':orchestrator-core')
+}
