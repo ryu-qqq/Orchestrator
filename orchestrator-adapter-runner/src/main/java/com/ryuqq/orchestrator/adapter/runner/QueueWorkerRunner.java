@@ -13,6 +13,9 @@ import com.ryuqq.orchestrator.core.spi.Store;
 import com.ryuqq.orchestrator.core.statemachine.OperationState;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Queue Worker Runner 구현체.
@@ -64,6 +67,7 @@ public final class QueueWorkerRunner implements Runtime {
     private final Executor executor;
     private final QueueWorkerConfig config;
     private final BackoffCalculator backoffCalculator;
+    private final ExecutorService workerExecutor;
 
     /**
      * 생성자.
@@ -93,6 +97,7 @@ public final class QueueWorkerRunner implements Runtime {
         this.executor = executor;
         this.config = config;
         this.backoffCalculator = new BackoffCalculator();
+        this.workerExecutor = Executors.newFixedThreadPool(config.getConcurrency());
     }
 
     @Override
@@ -100,9 +105,24 @@ public final class QueueWorkerRunner implements Runtime {
         // 1. 메시지 큐에서 배치 dequeue
         List<Envelope> envelopes = bus.dequeue(config.getBatchSize());
 
-        // 2. 각 Envelope 처리
+        // 2. 각 Envelope을 병렬 처리 (ExecutorService에 제출)
         for (Envelope envelope : envelopes) {
-            processEnvelope(envelope);
+            workerExecutor.submit(() -> processEnvelope(envelope));
+        }
+    }
+
+    /**
+     * Runner 종료 (리소스 정리).
+     *
+     * <p>ExecutorService를 graceful shutdown하여 진행 중인 작업이
+     * 완료되도록 대기합니다.</p>
+     *
+     * @throws InterruptedException shutdown 대기 중 인터럽트 발생 시
+     */
+    public void shutdown() throws InterruptedException {
+        workerExecutor.shutdown();
+        if (!workerExecutor.awaitTermination(60, TimeUnit.SECONDS)) {
+            workerExecutor.shutdownNow();
         }
     }
 
