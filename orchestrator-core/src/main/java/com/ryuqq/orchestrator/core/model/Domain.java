@@ -1,5 +1,7 @@
 package com.ryuqq.orchestrator.core.model;
 
+import java.util.regex.Pattern;
+
 /**
  * 업무 도메인 구분자.
  *
@@ -26,6 +28,8 @@ package com.ryuqq.orchestrator.core.model;
  */
 public final class Domain {
 
+    private static final Pattern VALID_PATTERN = Pattern.compile("^[A-Z_]+$");
+
     private final String value;
 
     private Domain(String value) {
@@ -35,7 +39,7 @@ public final class Domain {
         if (value.length() > 50) {
             throw new IllegalArgumentException("Domain length cannot exceed 50 characters");
         }
-        if (!value.matches("^[A-Z_]+$")) {
+        if (!VALID_PATTERN.matcher(value).matches()) {
             throw new IllegalArgumentException("Domain must contain only uppercase letters and underscores");
         }
         this.value = value;

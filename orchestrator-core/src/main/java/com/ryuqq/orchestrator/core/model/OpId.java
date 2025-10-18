@@ -1,5 +1,7 @@
 package com.ryuqq.orchestrator.core.model;
 
+import java.util.regex.Pattern;
+
 /**
  * Operation의 전역 고유 식별자.
  *
@@ -19,6 +21,8 @@ package com.ryuqq.orchestrator.core.model;
  */
 public final class OpId {
 
+    private static final Pattern VALID_PATTERN = Pattern.compile("^[a-zA-Z0-9\\-_]+$");
+
     private final String value;
 
     private OpId(String value) {
@@ -28,7 +32,7 @@ public final class OpId {
         if (value.length() > 255) {
             throw new IllegalArgumentException("OpId length cannot exceed 255 characters");
         }
-        if (!value.matches("^[a-zA-Z0-9\\-_]+$")) {
+        if (!VALID_PATTERN.matcher(value).matches()) {
             throw new IllegalArgumentException("OpId contains invalid characters. Only alphanumeric, hyphen, and underscore are allowed");
         }
         this.value = value;
