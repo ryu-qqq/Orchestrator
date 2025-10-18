@@ -92,7 +92,7 @@ public final class Finalizer {
         // 1. PENDING 항목 스캔
         List<OpId> pendingOpIds = store.scanWA(
             WriteAheadState.PENDING,
-            config.getBatchSize()
+            config.batchSize()
         );
 
         // 2. 각 항목 복구 시도

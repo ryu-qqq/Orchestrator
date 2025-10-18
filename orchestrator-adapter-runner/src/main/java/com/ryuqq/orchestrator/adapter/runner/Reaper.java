@@ -95,8 +95,8 @@ public final class Reaper {
 
         // 1. 장기 IN_PROGRESS 작업 스캔
         List<OpId> stuckOpIds = store.scanInProgress(
-            config.getTimeoutThresholdMs(),
-            config.getBatchSize()
+            config.timeoutThresholdMs(),
+            config.batchSize()
         );
 
         // 2. 각 항목 리컨실 시도
@@ -122,7 +122,7 @@ public final class Reaper {
     private boolean tryReconcile(OpId opId) {
         try {
             // 1. 리컨실 전략 확인
-            ReconcileStrategy strategy = config.getDefaultStrategy();
+            ReconcileStrategy strategy = config.defaultStrategy();
 
             // 2. 전략에 따라 처리 (RETRY에서만 envelope 조회)
             switch (strategy) {

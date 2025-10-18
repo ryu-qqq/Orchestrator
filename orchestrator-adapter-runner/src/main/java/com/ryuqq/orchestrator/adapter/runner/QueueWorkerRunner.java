@@ -117,13 +117,13 @@ public final class QueueWorkerRunner implements Runtime {
         this.executor = executor;
         this.config = config;
         this.backoffCalculator = backoffCalculator;
-        this.workerExecutor = Executors.newFixedThreadPool(config.getConcurrency());
+        this.workerExecutor = Executors.newFixedThreadPool(config.concurrency());
     }
 
     @Override
     public void pump() {
         // 1. 메시지 큐에서 배치 dequeue
-        List<Envelope> envelopes = bus.dequeue(config.getBatchSize());
+        List<Envelope> envelopes = bus.dequeue(config.batchSize());
 
         // 2. 각 Envelope을 병렬 처리 (ExecutorService에 제출)
         for (Envelope envelope : envelopes) {
@@ -228,7 +228,7 @@ public final class QueueWorkerRunner implements Runtime {
     private void handleRetry(OpId opId, Retry retry, Envelope envelope) {
         int attemptCount = retry.attemptCount();
 
-        if (attemptCount < config.getMaxRetries()) {
+        if (attemptCount < config.maxRetries()) {
             // 재시도 가능
             long delay = backoffCalculator.calculate(attemptCount);
             bus.publish(envelope, delay);
@@ -255,7 +255,7 @@ public final class QueueWorkerRunner implements Runtime {
         log.error("Operation {} failed: {} - {}", opId, fail.errorCode(), fail.message());
 
         // 2. DLQ 전송 (선택적)
-        if (config.isDlqEnabled()) {
+        if (config.dlqEnabled()) {
             bus.publishToDLQ(envelope, fail);
         }
     }
@@ -273,7 +273,7 @@ public final class QueueWorkerRunner implements Runtime {
      */
     private void pollForCompletion(OpId opId) {
         long startTimeNanos = System.nanoTime();
-        long timeoutNanos = config.getMaxProcessingTimeMs() * 1_000_000L;
+        long timeoutNanos = config.maxProcessingTimeMs() * 1_000_000L;
 
         while (System.nanoTime() - startTimeNanos < timeoutNanos) {
             OperationState state = executor.getState(opId);
@@ -288,7 +288,7 @@ public final class QueueWorkerRunner implements Runtime {
 
         // 타임아웃
         throw new RuntimeException("Operation " + opId + " timed out after " +
-            config.getMaxProcessingTimeMs() + "ms");
+            config.maxProcessingTimeMs() + "ms");
     }
 
     /**
