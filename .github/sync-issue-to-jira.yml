@@ -1,0 +1,316 @@
+name: Sync GitHub Issue to Jira
+
+on:
+  issues:
+    types: [opened, edited, closed, reopened]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'GitHub Issue Number to sync (leave empty to sync all open issues)'
+        required: false
+        type: string
+
+jobs:
+  sync-to-jira:
+    runs-on: ubuntu-latest
+    # Only run for issues, not pull requests
+    if: github.event_name == 'workflow_dispatch' || !github.event.issue.pull_request
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v4
+
+      - name: Login to Jira
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Sync Single Issue (Manual Trigger)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.issue_number != ''
+        id: sync_single
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issueNumber = parseInt('${{ github.event.inputs.issue_number }}');
+            console.log(`Manually syncing issue #${issueNumber}`);
+
+            // Get issue details
+            const issue = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+
+            // Check if already synced
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+
+            const jiraKeyRegex = /\[([A-Z]+-\d+)\]/;
+            const alreadySynced = comments.data.some(c => jiraKeyRegex.test(c.body));
+
+            if (alreadySynced) {
+              console.log('⚠️ Issue already synced to Jira');
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: '⚠️ 이 이슈는 이미 Jira와 동기화되어 있습니다.'
+              });
+              return;
+            }
+
+            core.setOutput('should_create', 'true');
+            core.setOutput('issue_data', JSON.stringify(issue.data));
+
+      - name: Sync All Open Issues (Manual Trigger)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.issue_number == ''
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            console.log('Syncing all open issues without Jira tickets...');
+
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: '!jira-synced',
+              per_page: 100
+            });
+
+            console.log(`Found ${issues.data.length} open issues to check`);
+
+            for (const issue of issues.data) {
+              if (issue.pull_request) continue; // Skip PRs
+
+              // Check if already has Jira comment
+              const comments = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number
+              });
+
+              const jiraKeyRegex = /\[([A-Z]+-\d+)\]/;
+              const hasJira = comments.data.some(c => jiraKeyRegex.test(c.body));
+
+              if (hasJira) {
+                console.log(`Issue #${issue.number} already has Jira ticket, skipping`);
+                continue;
+              }
+
+              console.log(`Creating Jira ticket for issue #${issue.number}: ${issue.title}`);
+              core.setOutput(`sync_issue_${issue.number}`, 'true');
+            }
+
+            core.setOutput('issues_to_sync', JSON.stringify(issues.data.map(i => i.number)));
+
+      - name: Create Jira Issue (Manual Trigger - Single)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.issue_number != '' && steps.sync_single.outputs.should_create == 'true'
+        id: create_manual_single
+        uses: atlassian/gajira-create@v3
+        with:
+          project: ${{ secrets.JIRA_PROJECT_KEY }}
+          issuetype: Task
+          summary: "[GH-${{ github.event.inputs.issue_number }}] ${{ fromJSON(steps.sync_single.outputs.issue_data).title }}"
+          description: |
+            *Synced from GitHub Issue:* ${{ fromJSON(steps.sync_single.outputs.issue_data).html_url }}
+
+            h3. Description
+            ${{ fromJSON(steps.sync_single.outputs.issue_data).body || 'No description provided' }}
+
+            ---
+            *Created by:* ${{ fromJSON(steps.sync_single.outputs.issue_data).user.login }}
+            *GitHub Issue Number:* #${{ github.event.inputs.issue_number }}
+
+      - name: Add Jira Link to GitHub Issue (Manual Trigger)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.issue_number != '' && steps.create_manual_single.outputs.issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const jiraKey = '${{ steps.create_manual_single.outputs.issue }}';
+            const jiraUrl = '${{ secrets.JIRA_BASE_URL }}';
+            const issueNumber = parseInt('${{ github.event.inputs.issue_number }}');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `✅ Jira 이슈가 생성되었습니다: [${jiraKey}](${jiraUrl}/browse/${jiraKey})`
+            });
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              labels: ['jira-synced']
+            });
+
+      - name: Create Jira Issue
+        if: github.event.action == 'opened'
+        id: create
+        continue-on-error: true
+        uses: atlassian/gajira-create@v3
+        with:
+          project: ${{ secrets.JIRA_PROJECT_KEY }}
+          issuetype: Task
+          summary: "[GH-${{ github.event.issue.number }}] ${{ github.event.issue.title }}"
+          description: |
+            *Synced from GitHub Issue:* ${{ github.event.issue.html_url }}
+
+            h3. Description
+            ${{ github.event.issue.body || 'No description provided' }}
+
+            ---
+            *Created by:* ${{ github.event.issue.user.login }}
+            *Labels:* ${{ join(github.event.issue.labels.*.name, ', ') || 'None' }}
+            *GitHub Issue Number:* #${{ github.event.issue.number }}
+
+      - name: Log Jira Creation Result
+        if: github.event.action == 'opened'
+        run: |
+          echo "Jira issue creation outcome: ${{ steps.create.outcome }}"
+          echo "Jira issue key: ${{ steps.create.outputs.issue }}"
+
+      - name: Add Jira Issue Key to GitHub Issue
+        if: github.event.action == 'opened' && steps.create.outputs.issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const jiraKey = '${{ steps.create.outputs.issue }}';
+            const jiraUrl = '${{ secrets.JIRA_BASE_URL }}';
+
+            console.log(`Created Jira issue: ${jiraKey}`);
+
+            // Add comment with Jira link
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `✅ Jira 이슈가 생성되었습니다: [${jiraKey}](${jiraUrl}/browse/${jiraKey})`
+            });
+
+            // Add label to track sync
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['jira-synced']
+            });
+
+      - name: Handle Jira Creation Failure
+        if: github.event.action == 'opened' && steps.create.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `⚠️ Jira 이슈 생성에 실패했습니다. Jira 설정을 확인해주세요.\n\n` +
+                    `다음 항목을 확인하세요:\n` +
+                    `- JIRA_BASE_URL, JIRA_USER_EMAIL, JIRA_API_TOKEN, JIRA_PROJECT_KEY Secrets 설정\n` +
+                    `- Jira 프로젝트 권한\n` +
+                    `- Issue Type이 프로젝트에서 사용 가능한지 확인`
+            });
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['jira-sync-failed']
+            });
+
+      - name: Find Jira Issue from Comments
+        if: github.event.action != 'opened' && github.event_name != 'workflow_dispatch'
+        id: find
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            console.log(`Searching for Jira issue key in issue #${context.issue.number}`);
+
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+
+            console.log(`Found ${comments.data.length} comments`);
+
+            // Find Jira issue key from comments (matches both [KEY-123] and [KEY-123](url))
+            const jiraKeyRegex = /\[([A-Z]+-\d+)\](?:\([^\)]+\))?/;
+            const simpleKeyRegex = /([A-Z]+-\d+)/;
+
+            for (const comment of comments.data) {
+              console.log(`Checking comment by ${comment.user.login}: ${comment.body.substring(0, 100)}`);
+
+              // First try to find in markdown link format
+              let match = comment.body.match(jiraKeyRegex);
+              if (match) {
+                core.setOutput('issue', match[1]);
+                console.log(`✅ Found Jira issue in markdown link: ${match[1]}`);
+                return;
+              }
+
+              // If bot comment, try simple format
+              if (comment.user.type === 'Bot' || comment.user.login.includes('[bot]')) {
+                match = comment.body.match(simpleKeyRegex);
+                if (match) {
+                  core.setOutput('issue', match[1]);
+                  console.log(`✅ Found Jira issue in bot comment: ${match[1]}`);
+                  return;
+                }
+              }
+            }
+
+            // Also check issue title for [KEY-123] format
+            console.log(`Checking issue title: ${context.payload.issue.title}`);
+            const titleMatch = context.payload.issue.title.match(simpleKeyRegex);
+            if (titleMatch) {
+              core.setOutput('issue', titleMatch[1]);
+              console.log(`✅ Found Jira issue in title: ${titleMatch[1]}`);
+            } else {
+              console.log('❌ No Jira issue key found');
+              core.warning('Jira issue key not found. The issue may not have been synced initially.');
+            }
+
+      - name: Update Jira Issue Status (Closed)
+        if: github.event.action == 'closed' && steps.find.outputs.issue
+        uses: atlassian/gajira-transition@v3
+        with:
+          issue: ${{ steps.find.outputs.issue }}
+          transition: "Done"
+
+      - name: Update Jira Issue Status (Reopened)
+        if: github.event.action == 'reopened' && steps.find.outputs.issue
+        uses: atlassian/gajira-transition@v3
+        with:
+          issue: ${{ steps.find.outputs.issue }}
+          transition: "To Do"
+
+      - name: Add Comment to Jira
+        if: github.event_name == 'issue_comment' && steps.find.outputs.issue
+        uses: atlassian/gajira-comment@v3
+        with:
+          issue: ${{ steps.find.outputs.issue }}
+          comment: |
+            GitHub Comment by ${{ github.event.comment.user.login }}:
+
+            ${{ github.event.comment.body }}
+
+            [View on GitHub](${{ github.event.comment.html_url }})
