@@ -5,6 +5,8 @@ import com.ryuqq.orchestrator.core.model.OpId;
 import com.ryuqq.orchestrator.core.spi.Bus;
 import com.ryuqq.orchestrator.core.spi.Store;
 import com.ryuqq.orchestrator.core.statemachine.OperationState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -44,6 +46,7 @@ import java.util.List;
  */
 public final class Reaper {
 
+    private static final Logger log = LoggerFactory.getLogger(Reaper.class);
     private final Bus bus;
     private final Store store;
     private final ReaperConfig config;
@@ -88,7 +91,7 @@ public final class Reaper {
      * </pre>
      */
     public void scan() {
-        System.out.println("[INFO] Reaper scan started");
+        log.info("Reaper scan started");
 
         // 1. 장기 IN_PROGRESS 작업 스캔
         List<OpId> stuckOpIds = store.scanInProgress(
@@ -105,8 +108,7 @@ public final class Reaper {
         }
 
         // 3. 결과 로깅
-        System.out.println("[INFO] Reaper scan completed: " + reconciled +
-            " reconciled out of " + stuckOpIds.size() + " stuck");
+        log.info("Reaper scan completed: {} reconciled out of {} stuck", reconciled, stuckOpIds.size());
     }
 
     /**
@@ -119,23 +121,23 @@ public final class Reaper {
      */
     private boolean tryReconcile(OpId opId) {
         try {
-            // 1. Envelope 조회
-            Envelope envelope = store.getEnvelope(opId);
-
-            // 2. 리컨실 전략 적용
+            // 1. 리컨실 전략 확인
             ReconcileStrategy strategy = config.getDefaultStrategy();
+
+            // 2. 전략에 따라 처리 (RETRY에서만 envelope 조회)
             switch (strategy) {
-                case RETRY -> reconcileRetry(opId, envelope);
+                case RETRY -> {
+                    Envelope envelope = store.getEnvelope(opId);
+                    reconcileRetry(opId, envelope);
+                }
                 case FAIL -> reconcileFail(opId);
             }
 
-            System.out.println("[INFO] Reaper reconciled " + opId +
-                " with strategy: " + strategy);
+            log.info("Reaper reconciled {} with strategy: {}", opId, strategy);
             return true;
 
         } catch (Exception e) {
-            System.err.println("[ERROR] Failed to reconcile " + opId +
-                " in Reaper scan: " + e.getMessage());
+            log.error("Failed to reconcile {} in Reaper scan", opId, e);
             return false;
         }
     }
@@ -149,7 +151,7 @@ public final class Reaper {
     private void reconcileRetry(OpId opId, Envelope envelope) {
         // Envelope 재게시 (지연 없이 즉시 실행)
         bus.publish(envelope, 0);
-        System.out.println("[INFO] Reaper re-published envelope for " + opId);
+        log.info("Reaper re-published envelope for {}", opId);
     }
 
     /**
@@ -160,6 +162,6 @@ public final class Reaper {
     private void reconcileFail(OpId opId) {
         // 실패 처리
         store.finalize(opId, OperationState.FAILED);
-        System.out.println("[INFO] Reaper marked " + opId + " as FAILED");
+        log.info("Reaper marked {} as FAILED", opId);
     }
 }

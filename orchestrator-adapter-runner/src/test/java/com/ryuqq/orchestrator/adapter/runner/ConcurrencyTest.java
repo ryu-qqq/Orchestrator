@@ -19,6 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -344,7 +346,7 @@ class ConcurrencyTest {
     void 높은_동시성_환경에서_모든_작업_정상_처리됨() throws Exception {
         // given
         int totalOps = 100;
-        List<OpId> opIds = new ArrayList<>();
+        Queue<OpId> opIds = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < totalOps; i++) {
             opIds.add(OpId.of("op-" + i));
         }
@@ -355,14 +357,23 @@ class ConcurrencyTest {
                 return List.of();
             }
             // 배치 크기만큼 반환 (동시성 보장)
-            int batchSize = Math.min(10, opIds.size());
-            List<OpId> batch = new ArrayList<>(opIds.subList(0, batchSize));
-            opIds.subList(0, batchSize).clear();
+            int batchSize = invocation.getArgument(1);
+            List<OpId> batch = new ArrayList<>();
+            for (int i = 0; i < batchSize && !opIds.isEmpty(); i++) {
+                OpId polled = opIds.poll();
+                if (polled != null) {
+                    batch.add(polled);
+                }
+            }
             return batch;
         });
 
-        // 모든 항목이 Ok로 완료
-        for (OpId opId : List.copyOf(opIds)) {
+        // 모든 항목이 Ok로 완료 (스냅샷 생성)
+        List<OpId> opIdSnapshot = new ArrayList<>();
+        for (int i = 0; i < totalOps; i++) {
+            opIdSnapshot.add(OpId.of("op-" + i));
+        }
+        for (OpId opId : opIdSnapshot) {
             when(store.getWriteAheadOutcome(opId)).thenReturn(new Ok(opId, "Success"));
         }
 

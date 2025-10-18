@@ -8,6 +8,8 @@ import com.ryuqq.orchestrator.core.outcome.Retry;
 import com.ryuqq.orchestrator.core.spi.Store;
 import com.ryuqq.orchestrator.core.spi.WriteAheadState;
 import com.ryuqq.orchestrator.core.statemachine.OperationState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -44,6 +46,7 @@ import java.util.List;
  */
 public final class Finalizer {
 
+    private static final Logger log = LoggerFactory.getLogger(Finalizer.class);
     private final Store store;
     private final FinalizerConfig config;
 
@@ -84,7 +87,7 @@ public final class Finalizer {
      * </pre>
      */
     public void scan() {
-        System.out.println("[INFO] Finalizer scan started");
+        log.info("Finalizer scan started");
 
         // 1. PENDING 항목 스캔
         List<OpId> pendingOpIds = store.scanWA(
@@ -101,8 +104,7 @@ public final class Finalizer {
         }
 
         // 3. 결과 로깅
-        System.out.println("[INFO] Finalizer scan completed: " + recovered +
-            " recovered out of " + pendingOpIds.size() + " pending");
+        log.info("Finalizer scan completed: {} recovered out of {} pending", recovered, pendingOpIds.size());
     }
 
     /**
@@ -124,20 +126,18 @@ public final class Finalizer {
                 case Fail fail -> OperationState.FAILED;
                 case Retry retry -> {
                     // Retry는 PENDING 상태로 남아있으면 안 됨 (이상 케이스)
-                    System.err.println("[WARN] Unexpected Retry in WriteAheadLog for " + opId);
+                    log.warn("Unexpected Retry in WriteAheadLog for {}", opId);
                     yield OperationState.FAILED;
                 }
             };
 
             // 3. finalize 시도
             store.finalize(opId, targetState);
-            System.out.println("[INFO] Finalizer recovered " + opId + ": " +
-                OperationState.IN_PROGRESS + " → " + targetState);
+            log.info("Finalizer recovered {}: {} → {}", opId, OperationState.IN_PROGRESS, targetState);
             return true;
 
         } catch (Exception e) {
-            System.err.println("[ERROR] Failed to finalize " + opId +
-                " in Finalizer scan: " + e.getMessage());
+            log.error("Failed to finalize {} in Finalizer scan", opId, e);
             return false;
         }
     }

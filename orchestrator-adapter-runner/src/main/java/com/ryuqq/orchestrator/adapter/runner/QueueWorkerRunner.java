@@ -2,6 +2,8 @@ package com.ryuqq.orchestrator.adapter.runner;
 
 import com.ryuqq.orchestrator.application.runtime.Runtime;
 import com.ryuqq.orchestrator.core.contract.Envelope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.ryuqq.orchestrator.core.executor.Executor;
 import com.ryuqq.orchestrator.core.model.OpId;
 import com.ryuqq.orchestrator.core.outcome.Fail;
@@ -60,6 +62,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class QueueWorkerRunner implements Runtime {
 
+    private static final Logger log = LoggerFactory.getLogger(QueueWorkerRunner.class);
     private static final long DEFAULT_POLLING_INTERVAL_MS = 10;
 
     private final Bus bus;
@@ -208,7 +211,7 @@ public final class QueueWorkerRunner implements Runtime {
             store.finalize(opId, OperationState.COMPLETED);
         } catch (Exception e) {
             // 로그만 남기고 계속 진행 (Finalizer가 처리)
-            System.err.println("[WARN] finalize failed for " + opId + ", will be handled by Finalizer: " + e.getMessage());
+            log.warn("finalize failed for {}, will be handled by Finalizer", opId, e);
         }
     }
 
@@ -229,12 +232,11 @@ public final class QueueWorkerRunner implements Runtime {
             // 재시도 가능
             long delay = backoffCalculator.calculate(attemptCount);
             bus.publish(envelope, delay);
-            System.out.println("[INFO] Retry scheduled for " + opId +
-                " after " + delay + "ms (attempt " + attemptCount + ")");
+            log.info("Retry scheduled for {} after {}ms (attempt {})", opId, delay, attemptCount);
         } else {
             // RetryBudget 소진
             store.finalize(opId, OperationState.FAILED);
-            System.err.println("[WARN] RetryBudget exhausted for " + opId + ", marked as FAILED");
+            log.warn("RetryBudget exhausted for {}, marked as FAILED", opId);
         }
     }
 
@@ -250,8 +252,7 @@ public final class QueueWorkerRunner implements Runtime {
     private void handleFail(OpId opId, Fail fail, Envelope envelope) {
         // 1. 즉시 실패 처리
         store.finalize(opId, OperationState.FAILED);
-        System.err.println("[ERROR] Operation " + opId + " failed: " +
-            fail.errorCode() + " - " + fail.message());
+        log.error("Operation {} failed: {} - {}", opId, fail.errorCode(), fail.message());
 
         // 2. DLQ 전송 (선택적)
         if (config.isDlqEnabled()) {

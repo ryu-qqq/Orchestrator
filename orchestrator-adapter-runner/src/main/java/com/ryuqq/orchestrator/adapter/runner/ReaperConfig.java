@@ -1,9 +1,9 @@
 package com.ryuqq.orchestrator.adapter.runner;
 
 /**
- * Reaper 설정.
+ * Reaper 설정 (불변 record).
  *
- * <p>이 클래스는 Reaper의 동작을 제어하는 설정값을 담고 있습니다.</p>
+ * <p>이 record는 Reaper의 동작을 제어하는 설정값을 담고 있습니다.</p>
  *
  * <p><strong>설정 항목:</strong></p>
  * <ul>
@@ -22,108 +22,79 @@ package com.ryuqq.orchestrator.adapter.runner;
  *
  * @author Orchestrator Team
  * @since 1.0.0
+ * @param scanIntervalMs 스캔 주기 (밀리초, 양수여야 함)
+ * @param timeoutThresholdMs 타임아웃 임계값 (밀리초, 양수여야 함)
+ * @param batchSize 배치 크기 (1 이상이어야 함)
+ * @param defaultStrategy 기본 리컨실 전략 (null이 아니어야 함)
  */
-public class ReaperConfig {
+public record ReaperConfig(
+    long scanIntervalMs,
+    long timeoutThresholdMs,
+    int batchSize,
+    ReconcileStrategy defaultStrategy
+) {
 
-    private long scanIntervalMs = 300000;        // 5분
-    private long timeoutThresholdMs = 600000;    // 10분
-    private int batchSize = 50;
-    private ReconcileStrategy defaultStrategy = ReconcileStrategy.FAIL;
-
+    /**
+     * 기본 설정 생성자.
+     *
+     * <p>기본값: scanIntervalMs=300000ms (5분), timeoutThresholdMs=600000ms (10분),
+     * batchSize=50, defaultStrategy=FAIL</p>
+     */
     public ReaperConfig() {
+        this(300000, 600000, 50, ReconcileStrategy.FAIL);
     }
 
     /**
-     * 스캔 주기 조회.
+     * Compact constructor (유효성 검증).
      *
-     * @return 스캔 주기 (밀리초)
+     * @throws IllegalArgumentException 파라미터 검증 실패 시
      */
-    public long getScanIntervalMs() {
-        return scanIntervalMs;
-    }
-
-    /**
-     * 스캔 주기 설정.
-     *
-     * @param scanIntervalMs 스캔 주기 (밀리초, 양수여야 함)
-     * @throws IllegalArgumentException scanIntervalMs가 양수가 아닌 경우
-     */
-    public void setScanIntervalMs(long scanIntervalMs) {
+    public ReaperConfig {
         if (scanIntervalMs <= 0) {
             throw new IllegalArgumentException(
                 "scanIntervalMs must be positive (current: " + scanIntervalMs + ")"
             );
         }
-        this.scanIntervalMs = scanIntervalMs;
-    }
-
-    /**
-     * 타임아웃 임계값 조회.
-     *
-     * @return 타임아웃 임계값 (밀리초)
-     */
-    public long getTimeoutThresholdMs() {
-        return timeoutThresholdMs;
-    }
-
-    /**
-     * 타임아웃 임계값 설정.
-     *
-     * @param timeoutThresholdMs 타임아웃 임계값 (밀리초, 양수여야 함)
-     * @throws IllegalArgumentException timeoutThresholdMs가 양수가 아닌 경우
-     */
-    public void setTimeoutThresholdMs(long timeoutThresholdMs) {
         if (timeoutThresholdMs <= 0) {
             throw new IllegalArgumentException(
                 "timeoutThresholdMs must be positive (current: " + timeoutThresholdMs + ")"
             );
         }
-        this.timeoutThresholdMs = timeoutThresholdMs;
-    }
-
-    /**
-     * 배치 크기 조회.
-     *
-     * @return 배치 크기 (한 번에 처리할 항목 수)
-     */
-    public int getBatchSize() {
-        return batchSize;
-    }
-
-    /**
-     * 배치 크기 설정.
-     *
-     * @param batchSize 배치 크기 (1 이상이어야 함)
-     * @throws IllegalArgumentException batchSize가 양수가 아닌 경우
-     */
-    public void setBatchSize(int batchSize) {
         if (batchSize <= 0) {
             throw new IllegalArgumentException(
                 "batchSize must be positive (current: " + batchSize + ")"
             );
         }
-        this.batchSize = batchSize;
-    }
-
-    /**
-     * 기본 리컨실 전략 조회.
-     *
-     * @return 기본 리컨실 전략
-     */
-    public ReconcileStrategy getDefaultStrategy() {
-        return defaultStrategy;
-    }
-
-    /**
-     * 기본 리컨실 전략 설정.
-     *
-     * @param defaultStrategy 기본 리컨실 전략
-     * @throws IllegalArgumentException defaultStrategy가 null인 경우
-     */
-    public void setDefaultStrategy(ReconcileStrategy defaultStrategy) {
         if (defaultStrategy == null) {
             throw new IllegalArgumentException("defaultStrategy cannot be null");
         }
-        this.defaultStrategy = defaultStrategy;
+    }
+
+    /**
+     * scanIntervalMs만 변경한 새 인스턴스 생성.
+     */
+    public ReaperConfig withScanIntervalMs(long scanIntervalMs) {
+        return new ReaperConfig(scanIntervalMs, timeoutThresholdMs, batchSize, defaultStrategy);
+    }
+
+    /**
+     * timeoutThresholdMs만 변경한 새 인스턴스 생성.
+     */
+    public ReaperConfig withTimeoutThresholdMs(long timeoutThresholdMs) {
+        return new ReaperConfig(scanIntervalMs, timeoutThresholdMs, batchSize, defaultStrategy);
+    }
+
+    /**
+     * batchSize만 변경한 새 인스턴스 생성.
+     */
+    public ReaperConfig withBatchSize(int batchSize) {
+        return new ReaperConfig(scanIntervalMs, timeoutThresholdMs, batchSize, defaultStrategy);
+    }
+
+    /**
+     * defaultStrategy만 변경한 새 인스턴스 생성.
+     */
+    public ReaperConfig withDefaultStrategy(ReconcileStrategy defaultStrategy) {
+        return new ReaperConfig(scanIntervalMs, timeoutThresholdMs, batchSize, defaultStrategy);
     }
 }

@@ -8,16 +8,16 @@ package com.ryuqq.orchestrator.adapter.runner;
  *
  * <p><strong>알고리즘:</strong></p>
  * <pre>
- * delay = min(baseDelay * 2^attemptCount + jitter, maxDelay)
+ * delay = min(baseDelay * 2^(attemptCount-1) + jitter, maxDelay)
  * jitter = random(0, exponential * jitterFactor)
  * </pre>
  *
  * <p><strong>예시 (baseDelay=1000ms, jitterFactor=0.1):</strong></p>
  * <ul>
- *   <li>attemptCount=1: 1000ms + jitter(0-100ms) = 1000-1100ms</li>
- *   <li>attemptCount=2: 2000ms + jitter(0-200ms) = 2000-2200ms</li>
- *   <li>attemptCount=3: 4000ms + jitter(0-400ms) = 4000-4400ms</li>
- *   <li>attemptCount=10: 1024000ms (capped at maxDelay=300000ms)</li>
+ *   <li>attemptCount=1: 1000ms + jitter(0-100ms) = 1000-1100ms (2^0 * base)</li>
+ *   <li>attemptCount=2: 2000ms + jitter(0-200ms) = 2000-2200ms (2^1 * base)</li>
+ *   <li>attemptCount=3: 4000ms + jitter(0-400ms) = 4000-4400ms (2^2 * base)</li>
+ *   <li>attemptCount=10: 512000ms (capped at maxDelay=300000ms) (2^9 * base)</li>
  * </ul>
  *
  * @author Orchestrator Team
@@ -86,8 +86,9 @@ public class BackoffCalculator {
         }
 
         // 1. 지수적 백오프 (overflow 방지를 위해 min 적용)
+        // attemptCount=1일 때 baseDelayMs, attemptCount=2일 때 2*baseDelayMs, ...
         long exponential = Math.min(
-            baseDelayMs * (1L << attemptCount),
+            baseDelayMs * (1L << (attemptCount - 1)),
             maxDelayMs
         );
 
