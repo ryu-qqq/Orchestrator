@@ -1,0 +1,30 @@
+{
+  "id": "application-layer-usecase-design-02_query-usecase",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/usecase-design/02_query-usecase.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "query",
+        "usecase"
+      ],
+      "secondary": [
+        "query",
+        "usecase",
+        "조회",
+        "유스케이스"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "high",
+    "tokenEstimate": 568
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/usecase-design/02_query-usecase.md",
+    "summary": "Auto-generated from 02_query-usecase.md"
+  }
+}

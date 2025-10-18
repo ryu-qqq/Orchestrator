@@ -1,0 +1,33 @@
+{
+  "id": "application-layer-dto-patterns-01_request-response-dto",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/dto-patterns/01_request-response-dto.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "request",
+        "response",
+        "dto"
+      ],
+      "secondary": [
+        "requestresponse",
+        "dto",
+        "api",
+        "계층",
+        "dto",
+        "패턴"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "high",
+    "tokenEstimate": 1413
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/dto-patterns/01_request-response-dto.md",
+    "summary": "Auto-generated from 01_request-response-dto.md"
+  }
+}

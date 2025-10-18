@@ -1,0 +1,31 @@
+{
+  "id": "persistence-layer-querydsl-optimization-03_batch-processing",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/04-persistence-layer/querydsl-optimization/03_batch-processing.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "batch",
+        "processing"
+      ],
+      "secondary": [
+        "batch",
+        "processing",
+        "querydsl",
+        "대량",
+        "처리"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-persistence",
+    "priority": "high",
+    "tokenEstimate": 270
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/04-persistence-layer/querydsl-optimization/03_batch-processing.md",
+    "summary": "Auto-generated from 03_batch-processing.md"
+  }
+}

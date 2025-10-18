@@ -1,0 +1,37 @@
+{
+  "id": "adapter-rest-api-layer-controller-design-02_request-validation",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/controller-design/02_request-validation.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "request",
+        "validation"
+      ],
+      "secondary": [
+        "api",
+        "request",
+        "validation",
+        "요청",
+        "검증",
+        "전략"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "high",
+    "tokenEstimate": 3439
+  },
+  "rules": {
+    "prohibited": [
+      "❌ **검증 누락**: null, 빈 값, 잘못된 범위 등 검증하지 않음",
+      "❌ **늦은 실패**: UseCase나 Domain에서 에러 발생 (Fail Slow)",
+      "❌ **불친절한 에러**: 500 Internal Server Error 또는 일반적인 에러 메시지",
+      "❌ **보안 취약**: SQL Injection, XSS 등에 취약할 수 있음"
+    ],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/controller-design/02_request-validation.md",
+    "summary": "Auto-generated from 02_request-validation.md"
+  }
+}

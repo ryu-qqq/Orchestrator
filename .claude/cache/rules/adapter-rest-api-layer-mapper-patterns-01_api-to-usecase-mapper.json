@@ -1,0 +1,43 @@
+{
+  "id": "adapter-rest-api-layer-mapper-patterns-01_api-to-usecase-mapper",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/mapper-patterns/01_api-to-usecase-mapper.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "api",
+        "to",
+        "usecase",
+        "mapper"
+      ],
+      "secondary": [
+        "api",
+        "to",
+        "usecase",
+        "mapper",
+        "api",
+        "dto와",
+        "usecase",
+        "dto",
+        "변환"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "critical",
+    "tokenEstimate": 2437
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ **@Component**: Spring Bean으로 등록",
+      "✅ **Stateless**: 인스턴스 변수 없음",
+      "✅ **단순 매핑**: 필드 변환만 수행",
+      "✅ **Private 헬퍼 메서드**: 중첩 DTO 변환 로직 분리",
+      "✅ **Javadoc**: 변환 방향 및 책임 명시"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/mapper-patterns/01_api-to-usecase-mapper.md",
+    "summary": "Auto-generated from 01_api-to-usecase-mapper.md"
+  }
+}

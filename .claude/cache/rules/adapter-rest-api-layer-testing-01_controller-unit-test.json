@@ -1,0 +1,47 @@
+{
+  "id": "adapter-rest-api-layer-testing-01_controller-unit-test",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/testing/01_controller-unit-test.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "controller",
+        "unit",
+        "test"
+      ],
+      "secondary": [
+        "controller",
+        "unit",
+        "test",
+        "webmvctest",
+        "단위",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "high",
+    "tokenEstimate": 1747
+  },
+  "rules": {
+    "prohibited": [
+      "❌ 비즈니스 로직 (UseCase에서 테스트)",
+      "❌ 데이터베이스 연동 (Integration Test)",
+      "❌ 외부 API 호출 (Integration Test)"
+    ],
+    "allowed": [
+      "✅ **빠른 실행**: 전체 Context 로딩 불필요",
+      "✅ **격리된 테스트**: Controller 로직만 검증",
+      "✅ **MockMvc 자동 설정**: HTTP 요청/응답 시뮬레이션",
+      "✅ HTTP 메서드 매핑 (`@GetMapping`, `@PostMapping`)",
+      "✅ 요청 검증 (`@Valid`, Bean Validation)",
+      "✅ 응답 상태 코드 (200, 201, 400, 404)",
+      "✅ JSON 직렬화/역직렬화",
+      "✅ Mapper 호출 (API DTO ↔ UseCase DTO)",
+      "✅ ErrorResponse 형식"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/testing/01_controller-unit-test.md",
+    "summary": "Auto-generated from 01_controller-unit-test.md"
+  }
+}

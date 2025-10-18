@@ -1,0 +1,31 @@
+{
+  "id": "persistence-layer-repository-patterns-01_aggregate-repository",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/04-persistence-layer/repository-patterns/01_aggregate-repository.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "aggregate",
+        "repository"
+      ],
+      "secondary": [
+        "aggregate",
+        "repository",
+        "aggregate",
+        "root",
+        "저장소"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-persistence",
+    "priority": "high",
+    "tokenEstimate": 283
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/04-persistence-layer/repository-patterns/01_aggregate-repository.md",
+    "summary": "Auto-generated from 01_aggregate-repository.md"
+  }
+}

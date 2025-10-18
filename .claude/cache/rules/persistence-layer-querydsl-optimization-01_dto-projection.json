@@ -1,0 +1,32 @@
+{
+  "id": "persistence-layer-querydsl-optimization-01_dto-projection",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/04-persistence-layer/querydsl-optimization/01_dto-projection.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "dto",
+        "projection"
+      ],
+      "secondary": [
+        "dto",
+        "projection",
+        "querydsl",
+        "dto",
+        "조회",
+        "최적화"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-persistence",
+    "priority": "high",
+    "tokenEstimate": 318
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/04-persistence-layer/querydsl-optimization/01_dto-projection.md",
+    "summary": "Auto-generated from 01_dto-projection.md"
+  }
+}

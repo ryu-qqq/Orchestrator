@@ -1,0 +1,34 @@
+{
+  "id": "error-handling-05_errorcode-management",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/08-error-handling/05_errorcode-management.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "errorcode",
+        "management"
+      ],
+      "secondary": [
+        "errorcode",
+        "management",
+        "errorcode",
+        "관리",
+        "전략"
+      ],
+      "anti": []
+    },
+    "layer": "error-handling",
+    "priority": "high",
+    "tokenEstimate": 2607
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ 동일 상태 코드의 에러를 한눈에 파악",
+      "✅ 새 에러 추가 시 적절한 위치 쉽게 찾기"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/08-error-handling/05_errorcode-management.md",
+    "summary": "Auto-generated from 05_errorcode-management.md"
+  }
+}

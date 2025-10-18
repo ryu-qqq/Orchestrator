@@ -1,0 +1,31 @@
+{
+  "id": "application-layer-transaction-management-01_transaction-boundaries",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/transaction-management/01_transaction-boundaries.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "transaction",
+        "boundaries"
+      ],
+      "secondary": [
+        "transaction",
+        "boundaries",
+        "with",
+        "external",
+        "calls"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "critical",
+    "tokenEstimate": 1649
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/transaction-management/01_transaction-boundaries.md",
+    "summary": "Auto-generated from 01_transaction-boundaries.md"
+  }
+}

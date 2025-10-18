@@ -1,0 +1,49 @@
+{
+  "id": "java21-patterns-sealed-classes-04_aggregate-state-modeling",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/sealed-classes/04_aggregate-state-modeling.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "aggregate",
+        "state",
+        "modeling"
+      ],
+      "secondary": [
+        "aggregate",
+        "state",
+        "modeling",
+        "with",
+        "sealed",
+        "classes",
+        "상태",
+        "전이",
+        "모델링"
+      ],
+      "anti": [
+        "if (status != CONFIRMED)",
+        "trackingNumber"
+      ]
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 2590
+  },
+  "rules": {
+    "prohibited": [
+      "❌ 런타임 검증 (`if (status != CONFIRMED)`)",
+      "❌ 불필요한 필드 (`trackingNumber`는 SHIPPED 상태에만 필요)",
+      "❌ 타입 안전성 부족 (잘못된 상태 전이 컴파일 타임 검증 불가)",
+      "❌ 상태별 비즈니스 로직 분산"
+    ],
+    "allowed": [
+      "✅ 각 상태를 별도 Record로 모델링",
+      "✅ 상태별 필수 데이터만 포함 (`trackingNumber`는 `ShippedOrder`부터)",
+      "✅ 타입 안전한 상태 전이 메서드 (`submit()`, `confirm()`, `ship()`)",
+      "✅ 컴파일 타임 검증 (잘못된 상태 전이 불가능)"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/sealed-classes/04_aggregate-state-modeling.md",
+    "summary": "Auto-generated from 04_aggregate-state-modeling.md"
+  }
+}

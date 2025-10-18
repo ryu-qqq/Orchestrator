@@ -1,0 +1,37 @@
+{
+  "id": "java21-patterns-record-patterns-03_pattern-matching",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/record-patterns/03_pattern-matching.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "pattern",
+        "matching"
+      ],
+      "secondary": [
+        "pattern",
+        "matching",
+        "java",
+        "21",
+        "record",
+        "pattern",
+        "matching"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 577
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ Record Deconstruction (`CreditCard(var cardNumber, var cvv)`)",
+      "✅ Exhaustive Checking (모든 케이스 처리 강제)",
+      "✅ No default 필요 (Sealed + Pattern Matching)"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/record-patterns/03_pattern-matching.md",
+    "summary": "Auto-generated from 03_pattern-matching.md"
+  }
+}

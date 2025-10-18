@@ -1,0 +1,30 @@
+{
+  "id": "testing-multi-module-testing-02_shared-test-fixtures",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/05-testing/multi-module-testing/02_shared-test-fixtures.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "shared",
+        "test",
+        "fixtures"
+      ],
+      "secondary": [
+        "공유",
+        "테스트",
+        "픽스처"
+      ],
+      "anti": []
+    },
+    "layer": "testing",
+    "priority": "medium",
+    "tokenEstimate": 2991
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/05-testing/multi-module-testing/02_shared-test-fixtures.md",
+    "summary": "Auto-generated from 02_shared-test-fixtures.md"
+  }
+}

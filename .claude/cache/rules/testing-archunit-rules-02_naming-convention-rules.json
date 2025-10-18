@@ -1,0 +1,47 @@
+{
+  "id": "testing-archunit-rules-02_naming-convention-rules",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/05-testing/archunit-rules/02_naming-convention-rules.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "naming",
+        "convention",
+        "rules"
+      ],
+      "secondary": [
+        "naming",
+        "convention",
+        "rules",
+        "archunit으로",
+        "네이밍",
+        "규칙",
+        "검증"
+      ],
+      "anti": []
+    },
+    "layer": "testing",
+    "priority": "critical",
+    "tokenEstimate": 2221
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ `*UseCase` 접미사 필수",
+      "✅ Public Interface 여야 함",
+      "✅ `domain.port.in` 패키지에 위치",
+      "✅ `*Port` 접미사 필수",
+      "✅ `Load/Save/Send/Publish` 등 동사로 시작",
+      "✅ `domain.port.out` 패키지에 위치",
+      "✅ Outbound Adapter는 `*Adapter` 접미사",
+      "✅ Inbound Adapter (Controller)는 `*Controller` 접미사",
+      "✅ Adapter는 Port를 구현",
+      "✅ Command는 `*Command` 접미사",
+      "✅ Query는 `Get/Find/Search` + `*Query`",
+      "✅ Event는 `*Event` 접미사 + 과거 시제"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/05-testing/archunit-rules/02_naming-convention-rules.md",
+    "summary": "Auto-generated from 02_naming-convention-rules.md"
+  }
+}

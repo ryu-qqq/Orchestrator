@@ -1,0 +1,32 @@
+{
+  "id": "domain-layer-aggregate-design-03_consistency-boundaries",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/aggregate-design/03_consistency-boundaries.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "consistency",
+        "boundaries"
+      ],
+      "secondary": [
+        "consistency",
+        "boundaries",
+        "즉시최종",
+        "일관성의",
+        "의미",
+        "정리"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "critical",
+    "tokenEstimate": 217
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/aggregate-design/03_consistency-boundaries.md",
+    "summary": "Auto-generated from 03_consistency-boundaries.md"
+  }
+}

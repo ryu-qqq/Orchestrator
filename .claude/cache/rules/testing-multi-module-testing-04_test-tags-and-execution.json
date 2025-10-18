@@ -1,0 +1,33 @@
+{
+  "id": "testing-multi-module-testing-04_test-tags-and-execution",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/05-testing/multi-module-testing/04_test-tags-and-execution.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "test",
+        "tags",
+        "and",
+        "execution"
+      ],
+      "secondary": [
+        "테스트",
+        "태깅",
+        "및",
+        "실행",
+        "전략"
+      ],
+      "anti": []
+    },
+    "layer": "testing",
+    "priority": "medium",
+    "tokenEstimate": 2584
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/05-testing/multi-module-testing/04_test-tags-and-execution.md",
+    "summary": "Auto-generated from 04_test-tags-and-execution.md"
+  }
+}

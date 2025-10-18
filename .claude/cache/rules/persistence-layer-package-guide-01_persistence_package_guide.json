@@ -1,0 +1,28 @@
+{
+  "id": "persistence-layer-package-guide-01_persistence_package_guide",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/04-persistence-layer/package-guide/01_persistence_package_guide.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "persistence_package_guide"
+      ],
+      "secondary": [
+        "persistence",
+        "패키지",
+        "가이드"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-persistence",
+    "priority": "critical",
+    "tokenEstimate": 2004
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/04-persistence-layer/package-guide/01_persistence_package_guide.md",
+    "summary": "Auto-generated from 01_persistence_package_guide.md"
+  }
+}

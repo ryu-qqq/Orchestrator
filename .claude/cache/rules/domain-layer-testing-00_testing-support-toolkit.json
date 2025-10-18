@@ -1,0 +1,31 @@
+{
+  "id": "domain-layer-testing-00_testing-support-toolkit",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/testing/00_testing-support-toolkit.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "testing",
+        "support",
+        "toolkit"
+      ],
+      "secondary": [
+        "domain",
+        "testing",
+        "support",
+        "toolkit"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "low",
+    "tokenEstimate": 314
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/testing/00_testing-support-toolkit.md",
+    "summary": "Auto-generated from 00_testing-support-toolkit.md"
+  }
+}

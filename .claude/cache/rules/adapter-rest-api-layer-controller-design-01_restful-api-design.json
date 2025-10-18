@@ -1,0 +1,37 @@
+{
+  "id": "adapter-rest-api-layer-controller-design-01_restful-api-design",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/controller-design/01_restful-api-design.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "restful",
+        "api",
+        "design"
+      ],
+      "secondary": [
+        "restful",
+        "api",
+        "설계",
+        "원칙"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "high",
+    "tokenEstimate": 3538
+  },
+  "rules": {
+    "prohibited": [
+      "❌ 리소스가 아닌 행위(동사)에 집중",
+      "❌ HTTP 메서드의 의미를 무시 (모두 POST 또는 GET으로 처리)",
+      "❌ RESTful 클라이언트 도구와 호환성 저하",
+      "❌ API 설계 일관성 부족",
+      "❌ 확장성 및 유지보수성 저하"
+    ],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/controller-design/01_restful-api-design.md",
+    "summary": "Auto-generated from 01_restful-api-design.md"
+  }
+}

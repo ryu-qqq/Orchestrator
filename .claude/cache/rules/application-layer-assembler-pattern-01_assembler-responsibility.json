@@ -1,0 +1,30 @@
+{
+  "id": "application-layer-assembler-pattern-01_assembler-responsibility",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/assembler-pattern/01_assembler-responsibility.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "assembler",
+        "responsibility"
+      ],
+      "secondary": [
+        "assembler",
+        "commanddomain",
+        "변환",
+        "패턴"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "critical",
+    "tokenEstimate": 1272
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/assembler-pattern/01_assembler-responsibility.md",
+    "summary": "Auto-generated from 01_assembler-responsibility.md"
+  }
+}

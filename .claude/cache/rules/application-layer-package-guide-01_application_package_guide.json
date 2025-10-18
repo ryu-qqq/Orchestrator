@@ -1,0 +1,28 @@
+{
+  "id": "application-layer-package-guide-01_application_package_guide",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/package-guide/01_application_package_guide.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "application_package_guide"
+      ],
+      "secondary": [
+        "application",
+        "패키지",
+        "가이드"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "critical",
+    "tokenEstimate": 1976
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/package-guide/01_application_package_guide.md",
+    "summary": "Auto-generated from 01_application_package_guide.md"
+  }
+}

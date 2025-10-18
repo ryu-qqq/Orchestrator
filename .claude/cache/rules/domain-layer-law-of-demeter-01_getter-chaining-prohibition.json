@@ -1,0 +1,37 @@
+{
+  "id": "domain-layer-law-of-demeter-01_getter-chaining-prohibition",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/law-of-demeter/01_getter-chaining-prohibition.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "getter",
+        "chaining",
+        "prohibition"
+      ],
+      "secondary": [
+        "law",
+        "of",
+        "demeter",
+        "getter",
+        "체이닝",
+        "금지"
+      ],
+      "anti": [
+        "order.getCustomer().getAddress().getZip()"
+      ]
+    },
+    "layer": "domain",
+    "priority": "critical",
+    "tokenEstimate": 605
+  },
+  "rules": {
+    "prohibited": [
+      "❌ `order.getCustomer().getAddress().getZip()`"
+    ],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/law-of-demeter/01_getter-chaining-prohibition.md",
+    "summary": "Auto-generated from 01_getter-chaining-prohibition.md"
+  }
+}

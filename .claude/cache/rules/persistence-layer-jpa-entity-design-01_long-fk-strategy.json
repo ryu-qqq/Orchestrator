@@ -1,0 +1,30 @@
+{
+  "id": "persistence-layer-jpa-entity-design-01_long-fk-strategy",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/04-persistence-layer/jpa-entity-design/01_long-fk-strategy.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "long",
+        "fk",
+        "strategy"
+      ],
+      "secondary": [
+        "long",
+        "fk",
+        "strategy"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-persistence",
+    "priority": "critical",
+    "tokenEstimate": 1848
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/04-persistence-layer/jpa-entity-design/01_long-fk-strategy.md",
+    "summary": "Auto-generated from 01_long-fk-strategy.md"
+  }
+}

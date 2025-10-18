@@ -1,0 +1,43 @@
+{
+  "id": "java21-patterns-sealed-classes-01_domain-modeling",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/sealed-classes/01_domain-modeling.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "domain",
+        "modeling"
+      ],
+      "secondary": [
+        "domain",
+        "modeling",
+        "with",
+        "sealed",
+        "classes",
+        "제한된",
+        "상속",
+        "계층으로",
+        "도메인",
+        "모델링"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 2291
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ 각 결제 수단이 고유한 데이터 보유 (Record 활용)",
+      "✅ 타입 안전성 (컴파일 타임 검증)",
+      "✅ 제한된 확장 (3가지 결제 수단만 허용)",
+      "✅ 코드 간결성 (40% 감소)",
+      "✅ 타입 안전성 (컴파일 타임 검증)",
+      "✅ Exhaustive Checking (케이스 누락 방지)"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/sealed-classes/01_domain-modeling.md",
+    "summary": "Auto-generated from 01_domain-modeling.md"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "persistence-layer-testing-01_repository-unit-testing",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/04-persistence-layer/testing/01_repository-unit-testing.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "repository",
+        "unit",
+        "testing"
+      ],
+      "secondary": [
+        "repository",
+        "unit",
+        "testing",
+        "datajpatest",
+        "h2"
+      ],
+      "anti": [
+        "@SpringBootTest"
+      ]
+    },
+    "layer": "adapter-persistence",
+    "priority": "critical",
+    "tokenEstimate": 1121
+  },
+  "rules": {
+    "prohibited": [
+      "❌ `@SpringBootTest` 사용 (느림)",
+      "❌ Real DB 의존성 (Docker 필요)",
+      "❌ 외부 API 호출",
+      "❌ DB-Specific 함수 (PostgreSQL JSON, MySQL Full-Text)",
+      "❌ Flyway Migration 검증 (통합 테스트에서)"
+    ],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/04-persistence-layer/testing/01_repository-unit-testing.md",
+    "summary": "Auto-generated from 01_repository-unit-testing.md"
+  }
+}

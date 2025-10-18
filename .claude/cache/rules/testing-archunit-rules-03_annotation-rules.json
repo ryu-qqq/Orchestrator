@@ -1,0 +1,45 @@
+{
+  "id": "testing-archunit-rules-03_annotation-rules",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/05-testing/archunit-rules/03_annotation-rules.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "annotation",
+        "rules"
+      ],
+      "secondary": [
+        "annotation",
+        "rules",
+        "archunit으로",
+        "애노테이션",
+        "사용",
+        "규칙",
+        "검증"
+      ],
+      "anti": []
+    },
+    "layer": "testing",
+    "priority": "critical",
+    "tokenEstimate": 2221
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ `@Transactional`은 Public 메서드만",
+      "✅ `@Transactional` 메서드는 Final 금지",
+      "✅ Domain Layer에서 `@Transactional` 금지",
+      "✅ `@Transactional` 클래스는 Final 금지",
+      "✅ Domain Layer에서 `@Entity` 금지",
+      "✅ `@Entity`는 Persistence Layer에만",
+      "✅ `@Entity` 클래스는 `*JpaEntity` 접미사",
+      "✅ Domain Layer에 Spring 애노테이션 금지",
+      "✅ `@Service`는 Application Service만",
+      "✅ `@RestController`는 Web Adapter만",
+      "✅ `@Repository`는 Persistence Adapter만"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/05-testing/archunit-rules/03_annotation-rules.md",
+    "summary": "Auto-generated from 03_annotation-rules.md"
+  }
+}

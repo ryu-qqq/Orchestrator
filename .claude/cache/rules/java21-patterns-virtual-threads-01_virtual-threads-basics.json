@@ -1,0 +1,44 @@
+{
+  "id": "java21-patterns-virtual-threads-01_virtual-threads-basics",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/virtual-threads/01_virtual-threads-basics.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "virtual",
+        "threads",
+        "basics"
+      ],
+      "secondary": [
+        "virtual",
+        "threads",
+        "basics",
+        "java",
+        "21",
+        "virtual",
+        "threads",
+        "개념",
+        "및",
+        "spring",
+        "boot",
+        "통합"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 1898
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ 자동 리소스 정리 (try-with-resources)",
+      "✅ 부분 실패 시 나머지 작업 자동 취소",
+      "✅ 명시적인 에러 전파 (`throwIfFailed()`)",
+      "✅ Virtual Thread 자동 사용"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/virtual-threads/01_virtual-threads-basics.md",
+    "summary": "Auto-generated from 01_virtual-threads-basics.md"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "enterprise-patterns-event-driven-01_domain-events",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/07-enterprise-patterns/event-driven/01_domain-events.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "domain",
+        "events"
+      ],
+      "secondary": [
+        "domain",
+        "events",
+        "도메인",
+        "이벤트로",
+        "aggregate",
+        "결합도",
+        "감소"
+      ],
+      "anti": []
+    },
+    "layer": "enterprise",
+    "priority": "critical",
+    "tokenEstimate": 2246
+  },
+  "rules": {
+    "prohibited": [
+      "❌ Order, Inventory, Email 3가지 관심사가 하나의 트랜잭션에",
+      "❌ 외부 API 호출이 트랜잭션 내부 (성능 저하)",
+      "❌ 테스트 시 모든 의존성 Mocking 필요",
+      "❌ 확장 어려움 (새로운 기능 추가 시 메서드 수정)"
+    ],
+    "allowed": [
+      "✅ `AbstractAggregateRoot` 상속 → `registerEvent()` 메서드 제공",
+      "✅ Event는 즉시 발행되지 않고 **트랜잭션 커밋 시 자동 발행**",
+      "✅ Repository `save()` 호출 시 Spring Data가 Event 발행",
+      "✅ Law of Demeter 준수 (Getter 체이닝 원천 차단)",
+      "✅ 직렬화 안전 (Primitive 타입만 포함)",
+      "✅ 영속성 컨텍스트 독립적",
+      "✅ Event Handler에서 필요한 데이터만 조회"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/07-enterprise-patterns/event-driven/01_domain-events.md",
+    "summary": "Auto-generated from 01_domain-events.md"
+  }
+}

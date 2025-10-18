@@ -1,0 +1,38 @@
+{
+  "id": "error-handling-01_error-handling-strategy",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/08-error-handling/01_error-handling-strategy.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "error",
+        "handling",
+        "strategy"
+      ],
+      "secondary": [
+        "error",
+        "handling",
+        "strategy",
+        "에러",
+        "핸들링",
+        "전략"
+      ],
+      "anti": []
+    },
+    "layer": "error-handling",
+    "priority": "critical",
+    "tokenEstimate": 1478
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ DDD Bounded Context 원칙 준수",
+      "✅ 모듈 독립성 유지 (마이크로서비스 전환 용이)",
+      "✅ 팀별 독립 개발 가능 (머지 충돌 최소화)",
+      "✅ 코드 가독성 향상 (각 enum 50줄 내외)"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/08-error-handling/01_error-handling-strategy.md",
+    "summary": "Auto-generated from 01_error-handling-strategy.md"
+  }
+}

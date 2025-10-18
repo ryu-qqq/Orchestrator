@@ -1,0 +1,31 @@
+{
+  "id": "persistence-layer-querydsl-optimization-02_dynamic-query",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/04-persistence-layer/querydsl-optimization/02_dynamic-query.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "dynamic",
+        "query"
+      ],
+      "secondary": [
+        "dynamic",
+        "query",
+        "querydsl",
+        "동적",
+        "쿼리"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-persistence",
+    "priority": "high",
+    "tokenEstimate": 321
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/04-persistence-layer/querydsl-optimization/02_dynamic-query.md",
+    "summary": "Auto-generated from 02_dynamic-query.md"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "testing-integration-testing-03_persistence-tests",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/05-testing/integration-testing/03_persistence-tests.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "persistence",
+        "tests"
+      ],
+      "secondary": [
+        "persistence",
+        "tests",
+        "repository",
+        "계층",
+        "통합",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "testing",
+    "priority": "critical",
+    "tokenEstimate": 1877
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ `@DataJpaTest`: JPA 관련 Bean만 로드 (빠름)",
+      "✅ `@AutoConfigureTestDatabase(replace = NONE)`: Testcontainers 사용",
+      "✅ `TestEntityManager`: 영속성 컨텍스트 제어",
+      "✅ `flush()` + `clear()`: 실제 DB 반영 검증"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/05-testing/integration-testing/03_persistence-tests.md",
+    "summary": "Auto-generated from 03_persistence-tests.md"
+  }
+}

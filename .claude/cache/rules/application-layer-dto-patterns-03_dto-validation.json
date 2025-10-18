@@ -1,0 +1,31 @@
+{
+  "id": "application-layer-dto-patterns-03_dto-validation",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/dto-patterns/03_dto-validation.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "dto",
+        "validation"
+      ],
+      "secondary": [
+        "dto",
+        "validation",
+        "dto",
+        "검증",
+        "전략"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "critical",
+    "tokenEstimate": 1470
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/dto-patterns/03_dto-validation.md",
+    "summary": "Auto-generated from 03_dto-validation.md"
+  }
+}

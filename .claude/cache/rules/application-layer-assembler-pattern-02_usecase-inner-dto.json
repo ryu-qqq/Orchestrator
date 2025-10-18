@@ -1,0 +1,31 @@
+{
+  "id": "application-layer-assembler-pattern-02_usecase-inner-dto",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/assembler-pattern/02_usecase-inner-dto.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "usecase",
+        "inner",
+        "dto"
+      ],
+      "secondary": [
+        "usecase",
+        "내부",
+        "commandresponse",
+        "패턴"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "high",
+    "tokenEstimate": 1536
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/assembler-pattern/02_usecase-inner-dto.md",
+    "summary": "Auto-generated from 02_usecase-inner-dto.md"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "id": "adapter-rest-api-layer-controller-design-03_response-handling",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/controller-design/03_response-handling.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "response",
+        "handling"
+      ],
+      "secondary": [
+        "api",
+        "response",
+        "handling",
+        "응답",
+        "처리",
+        "및",
+        "표준화"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "high",
+    "tokenEstimate": 2665
+  },
+  "rules": {
+    "prohibited": [
+      "❌ **의미 전달 실패**: 모두 200 OK로 성공/실패 구분 불가",
+      "❌ **RESTful 원칙 위반**: HTTP 상태 코드의 의미 무시",
+      "❌ **클라이언트 부담**: 응답 본문을 파싱해야만 성공/실패 판단 가능",
+      "❌ **HTTP 캐싱 불가**: 상태 코드 기반 캐싱 전략 사용 불가"
+    ],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/controller-design/03_response-handling.md",
+    "summary": "Auto-generated from 03_response-handling.md"
+  }
+}

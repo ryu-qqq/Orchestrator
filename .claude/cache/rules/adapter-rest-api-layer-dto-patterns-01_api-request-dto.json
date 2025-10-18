@@ -1,0 +1,41 @@
+{
+  "id": "adapter-rest-api-layer-dto-patterns-01_api-request-dto",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/dto-patterns/01_api-request-dto.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "api",
+        "request",
+        "dto"
+      ],
+      "secondary": [
+        "api",
+        "request",
+        "dto",
+        "api",
+        "요청",
+        "dto",
+        "설계",
+        "패턴"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "critical",
+    "tokenEstimate": 3035
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ **Java Record**: 불변성 보장",
+      "✅ **Bean Validation**: `@NotNull`, `@Positive`, `@NotEmpty`, `@Valid`",
+      "✅ **Compact Constructor**: 추가 검증 및 null 방어",
+      "✅ **중첩 DTO**: `OrderItemRequest` 내부 정의",
+      "✅ **Javadoc**: 각 필드 설명 포함"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/dto-patterns/01_api-request-dto.md",
+    "summary": "Auto-generated from 01_api-request-dto.md"
+  }
+}

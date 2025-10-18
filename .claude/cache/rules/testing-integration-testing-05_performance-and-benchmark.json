@@ -1,0 +1,31 @@
+{
+  "id": "testing-integration-testing-05_performance-and-benchmark",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/05-testing/integration-testing/05_performance-and-benchmark.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "performance",
+        "and",
+        "benchmark"
+      ],
+      "secondary": [
+        "성능",
+        "및",
+        "벤치마크",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "testing",
+    "priority": "medium",
+    "tokenEstimate": 2480
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/05-testing/integration-testing/05_performance-and-benchmark.md",
+    "summary": "Auto-generated from 05_performance-and-benchmark.md"
+  }
+}

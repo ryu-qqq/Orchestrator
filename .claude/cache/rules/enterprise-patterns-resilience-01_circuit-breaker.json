@@ -1,0 +1,35 @@
+{
+  "id": "enterprise-patterns-resilience-01_circuit-breaker",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/07-enterprise-patterns/resilience/01_circuit-breaker.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "circuit",
+        "breaker"
+      ],
+      "secondary": [
+        "circuit",
+        "breaker",
+        "장애",
+        "전파",
+        "차단"
+      ],
+      "anti": []
+    },
+    "layer": "enterprise",
+    "priority": "high",
+    "tokenEstimate": 2451
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ **빠른 실패**: 타임아웃 대기 없이 즉시 실패 반환",
+      "✅ **리소스 절약**: 실패 확실한 요청에 리소스 낭비 방지",
+      "✅ **복구 시간 확보**: 외부 서비스가 복구될 시간 제공"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/07-enterprise-patterns/resilience/01_circuit-breaker.md",
+    "summary": "Auto-generated from 01_circuit-breaker.md"
+  }
+}

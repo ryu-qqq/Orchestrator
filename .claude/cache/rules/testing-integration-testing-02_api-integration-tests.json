@@ -1,0 +1,43 @@
+{
+  "id": "testing-integration-testing-02_api-integration-tests",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/05-testing/integration-testing/02_api-integration-tests.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "api",
+        "integration",
+        "tests"
+      ],
+      "secondary": [
+        "api",
+        "integration",
+        "tests",
+        "rest",
+        "api",
+        "통합",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "testing",
+    "priority": "critical",
+    "tokenEstimate": 1847
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ HTTP Status Code (201 Created, 400 Bad Request)",
+      "✅ Response Body JSON 구조",
+      "✅ Validation 에러 메시지",
+      "✅ Location Header",
+      "✅ BDD 스타일 (Given-When-Then)",
+      "✅ 가독성 높음",
+      "✅ JSON Path 검증 간편",
+      "✅ 실제 HTTP 요청/응답"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/05-testing/integration-testing/02_api-integration-tests.md",
+    "summary": "Auto-generated from 02_api-integration-tests.md"
+  }
+}

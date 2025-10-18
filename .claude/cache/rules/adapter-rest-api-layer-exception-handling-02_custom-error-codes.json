@@ -1,0 +1,35 @@
+{
+  "id": "adapter-rest-api-layer-exception-handling-02_custom-error-codes",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/exception-handling/02_custom-error-codes.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "custom",
+        "error",
+        "codes"
+      ],
+      "secondary": [
+        "custom",
+        "error",
+        "codes",
+        "rest",
+        "api",
+        "layer에서의",
+        "errorcode",
+        "활용"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "critical",
+    "tokenEstimate": 2447
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/exception-handling/02_custom-error-codes.md",
+    "summary": "Auto-generated from 02_custom-error-codes.md"
+  }
+}

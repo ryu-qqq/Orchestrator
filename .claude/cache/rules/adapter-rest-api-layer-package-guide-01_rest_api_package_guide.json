@@ -1,0 +1,29 @@
+{
+  "id": "adapter-rest-api-layer-package-guide-01_rest_api_package_guide",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/package-guide/01_rest_api_package_guide.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "rest_api_package_guide"
+      ],
+      "secondary": [
+        "rest",
+        "api",
+        "패키지",
+        "가이드"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "critical",
+    "tokenEstimate": 2606
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/package-guide/01_rest_api_package_guide.md",
+    "summary": "Auto-generated from 01_rest_api_package_guide.md"
+  }
+}

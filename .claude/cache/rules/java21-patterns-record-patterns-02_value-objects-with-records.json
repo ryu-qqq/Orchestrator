@@ -1,0 +1,48 @@
+{
+  "id": "java21-patterns-record-patterns-02_value-objects-with-records",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/record-patterns/02_value-objects-with-records.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "value",
+        "objects",
+        "with",
+        "records"
+      ],
+      "secondary": [
+        "value",
+        "objects",
+        "with",
+        "records",
+        "ddd",
+        "value",
+        "object를",
+        "record로",
+        "구현"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 1561
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ Compact Constructor에서 Null, Negative 검증",
+      "✅ `of()` 정적 팩토리 메서드",
+      "✅ `generate()` 새 ID 생성",
+      "✅ Normalization (소수점 정규화)",
+      "✅ 연산 메서드 (add, subtract, multiply)",
+      "✅ 비교 메서드 (isGreaterThan, isLessThan)",
+      "✅ 불변성 유지 (새 인스턴스 반환)",
+      "✅ `OrderId`, `CustomerId`, `ProductId` (Type-Safe ID)",
+      "✅ `Money` (금액 연산)",
+      "✅ `Quantity` (수량 연산)"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/record-patterns/02_value-objects-with-records.md",
+    "summary": "Auto-generated from 02_value-objects-with-records.md"
+  }
+}

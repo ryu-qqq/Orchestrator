@@ -1,0 +1,42 @@
+{
+  "id": "persistence-layer-testing-03_test-tags-strategy",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/04-persistence-layer/testing/03_test-tags-strategy.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "test",
+        "tags",
+        "strategy"
+      ],
+      "secondary": [
+        "test",
+        "tags",
+        "strategy",
+        "cicd",
+        "integration"
+      ],
+      "anti": [
+        "./gradlew test",
+        "\"unit\"",
+        "\"Unit\"",
+        "\"UNIT\""
+      ]
+    },
+    "layer": "adapter-persistence",
+    "priority": "high",
+    "tokenEstimate": 1583
+  },
+  "rules": {
+    "prohibited": [
+      "❌ 모든 테스트를 항상 실행 → CI/CD 느려짐",
+      "❌ 태그 없이 테스트 작성 → 분류 불가",
+      "❌ 통합 테스트를 기본 `./gradlew test`에 포함 → 개발 피드백 느려짐",
+      "❌ 태그 이름 불일치 (`\"unit\"` vs `\"Unit\"` vs `\"UNIT\"`)"
+    ],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/04-persistence-layer/testing/03_test-tags-strategy.md",
+    "summary": "Auto-generated from 03_test-tags-strategy.md"
+  }
+}

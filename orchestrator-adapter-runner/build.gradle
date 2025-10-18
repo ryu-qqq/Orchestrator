@@ -1,0 +1,7 @@
+dependencies {
+    // application 모듈 의존성
+    implementation project(':orchestrator-application')
+
+    // orchestrator-core 모듈 의존성 (transitive)
+    implementation project(':orchestrator-core')
+}

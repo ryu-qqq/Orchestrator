@@ -1,0 +1,33 @@
+{
+  "id": "application-layer-testing-01_application-service-testing",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/testing/01_application-service-testing.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "application",
+        "service",
+        "testing"
+      ],
+      "secondary": [
+        "application",
+        "service",
+        "testing",
+        "usecase",
+        "구현체",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "high",
+    "tokenEstimate": 845
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/testing/01_application-service-testing.md",
+    "summary": "Auto-generated from 01_application-service-testing.md"
+  }
+}

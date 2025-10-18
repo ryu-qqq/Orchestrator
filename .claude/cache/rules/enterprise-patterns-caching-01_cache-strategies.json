@@ -1,0 +1,38 @@
+{
+  "id": "enterprise-patterns-caching-01_cache-strategies",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/07-enterprise-patterns/caching/01_cache-strategies.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "cache",
+        "strategies"
+      ],
+      "secondary": [
+        "cache",
+        "strategies",
+        "캐싱",
+        "전략",
+        "및",
+        "패턴"
+      ],
+      "anti": []
+    },
+    "layer": "enterprise",
+    "priority": "critical",
+    "tokenEstimate": 2436
+  },
+  "rules": {
+    "prohibited": [
+      "❌ **실시간성 필수**: 최신 데이터 필수 (캐시 부적합)"
+    ],
+    "allowed": [
+      "✅ **읽기 빈도 높음**: 조회가 쓰기보다 10배 이상",
+      "✅ **변경 빈도 낮음**: 데이터 업데이트가 드묾",
+      "✅ **계산 비용 높음**: 복잡한 집계, 조인 쿼리"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/07-enterprise-patterns/caching/01_cache-strategies.md",
+    "summary": "Auto-generated from 01_cache-strategies.md"
+  }
+}

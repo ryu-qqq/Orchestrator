@@ -1,0 +1,39 @@
+{
+  "id": "enterprise-patterns-event-driven-02_event-sourcing",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/07-enterprise-patterns/event-driven/02_event-sourcing.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "event",
+        "sourcing"
+      ],
+      "secondary": [
+        "event",
+        "sourcing",
+        "이벤트",
+        "기반",
+        "상태",
+        "저장",
+        "및",
+        "복원"
+      ],
+      "anti": []
+    },
+    "layer": "enterprise",
+    "priority": "high",
+    "tokenEstimate": 1684
+  },
+  "rules": {
+    "prohibited": [
+      "❌ 변경 이력 추적을 위해 별도 Audit 테이블 관리",
+      "❌ 이력 기록 누락 가능 (개발자 실수)",
+      "❌ 과거 특정 시점 상태 복원 불가",
+      "❌ \"왜 이렇게 되었는가?\" 답변 어려움"
+    ],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/07-enterprise-patterns/event-driven/02_event-sourcing.md",
+    "summary": "Auto-generated from 02_event-sourcing.md"
+  }
+}

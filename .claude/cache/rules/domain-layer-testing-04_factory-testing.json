@@ -1,0 +1,33 @@
+{
+  "id": "domain-layer-testing-04_factory-testing",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/testing/04_factory-testing.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "factory",
+        "testing"
+      ],
+      "secondary": [
+        "factory",
+        "testing",
+        "도메인",
+        "객체",
+        "생성",
+        "로직",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "high",
+    "tokenEstimate": 916
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/testing/04_factory-testing.md",
+    "summary": "Auto-generated from 04_factory-testing.md"
+  }
+}
