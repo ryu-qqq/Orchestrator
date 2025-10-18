@@ -48,9 +48,9 @@ Epic OR-1은 Orchestrator Core SDK의 기반 인프라를 구축하는 작업이
 **설명**: `Orchestrator` 인터페이스를 구현하여 클라이언트 요청 수락 및 실행 조정 기능 제공
 
 **상세**:
-- **메서드**: `OperationHandle submit(Command command, TimeBudget timeBudget)`
+- **메서드**: `OperationHandle submit(Command command, long timeBudgetMs)`
   - `Command`: 실행할 업무 명령 (domain, eventType, bizKey, idemKey, payload)
-  - `TimeBudget`: Fast-Path 대기 시간 제한 (밀리초)
+  - `timeBudgetMs`: Fast-Path 대기 시간 제한 (밀리초, primitive long 타입)
   - `OperationHandle`: 작업 상태 및 결과를 추적할 수 있는 핸들
 - **책임**:
   - Command 유효성 검증
@@ -304,12 +304,12 @@ public interface Orchestrator {
      * Command를 제출하고 Fast-Path 대기.
      *
      * @param command 실행할 명령
-     * @param timeBudget Fast-Path 대기 시간 (밀리초)
+     * @param timeBudgetMs Fast-Path 대기 시간 (밀리초)
      * @return OperationHandle (완료 여부 및 결과)
      * @throws IllegalArgumentException command가 null이거나 유효하지 않은 경우
-     * @throws IllegalArgumentException timeBudget이 허용 범위를 벗어난 경우
+     * @throws IllegalArgumentException timeBudgetMs가 허용 범위를 벗어난 경우
      */
-    OperationHandle submit(Command command, long timeBudget);
+    OperationHandle submit(Command command, long timeBudgetMs);
 }
 ```
 
@@ -451,8 +451,8 @@ public final class InlineFastPathRunner implements Orchestrator {
     }
 
     @Override
-    public OperationHandle submit(Command command, long timeBudget) {
-        validateInput(command, timeBudget);
+    public OperationHandle submit(Command command, long timeBudgetMs) {
+        validateInput(command, timeBudgetMs);
 
         // 1. OpId 생성
         OpId opId = OpId.of(generateOpIdValue());
@@ -464,24 +464,25 @@ public final class InlineFastPathRunner implements Orchestrator {
         executor.execute(envelope);
 
         // 4. Fast-Path 폴링
-        return pollForCompletion(opId, timeBudget);
+        return pollForCompletion(opId, timeBudgetMs);
     }
 
-    private void validateInput(Command command, long timeBudget) {
+    private void validateInput(Command command, long timeBudgetMs) {
         if (command == null) {
             throw new IllegalArgumentException("command cannot be null");
         }
-        if (timeBudget < MIN_TIME_BUDGET_MS || timeBudget > MAX_TIME_BUDGET_MS) {
+        if (timeBudgetMs < MIN_TIME_BUDGET_MS || timeBudgetMs > MAX_TIME_BUDGET_MS) {
             throw new IllegalArgumentException(
-                String.format("timeBudget must be between %d and %d ms (current: %d)",
-                    MIN_TIME_BUDGET_MS, MAX_TIME_BUDGET_MS, timeBudget));
+                String.format("timeBudgetMs must be between %d and %d ms (current: %d)",
+                    MIN_TIME_BUDGET_MS, MAX_TIME_BUDGET_MS, timeBudgetMs));
         }
     }
 
-    private OperationHandle pollForCompletion(OpId opId, long timeBudget) {
-        long startTime = System.currentTimeMillis();
+    private OperationHandle pollForCompletion(OpId opId, long timeBudgetMs) {
+        long startTimeNanos = System.nanoTime();
+        long timeBudgetNanos = timeBudgetMs * 1_000_000L; // ms를 ns로 변환
 
-        while (System.currentTimeMillis() - startTime < timeBudget) {
+        while (System.nanoTime() - startTimeNanos < timeBudgetNanos) {
             OperationState state = executor.getState(opId);
 
             if (state.isTerminal()) {

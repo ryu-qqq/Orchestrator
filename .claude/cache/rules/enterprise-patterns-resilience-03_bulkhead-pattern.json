@@ -1,0 +1,37 @@
+{
+  "id": "enterprise-patterns-resilience-03_bulkhead-pattern",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/07-enterprise-patterns/resilience/03_bulkhead-pattern.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "bulkhead",
+        "pattern"
+      ],
+      "secondary": [
+        "bulkhead",
+        "pattern",
+        "장애",
+        "격리",
+        "및",
+        "리소스",
+        "분리"
+      ],
+      "anti": []
+    },
+    "layer": "enterprise",
+    "priority": "high",
+    "tokenEstimate": 1258
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ **장애 격리**: Payment API 다운 → Notification API는 정상 동작",
+      "✅ **공정 분배**: 느린 API가 전체 스레드 점유 방지",
+      "✅ **SLA 보장**: 중요 API에 우선 리소스 할당"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/07-enterprise-patterns/resilience/03_bulkhead-pattern.md",
+    "summary": "Auto-generated from 03_bulkhead-pattern.md"
+  }
+}

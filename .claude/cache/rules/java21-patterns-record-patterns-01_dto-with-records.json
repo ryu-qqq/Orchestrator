@@ -1,0 +1,42 @@
+{
+  "id": "java21-patterns-record-patterns-01_dto-with-records",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/record-patterns/01_dto-with-records.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "dto",
+        "with",
+        "records"
+      ],
+      "secondary": [
+        "dto",
+        "with",
+        "records",
+        "java",
+        "record로",
+        "requestresponse",
+        "dto",
+        "설계"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "critical",
+    "tokenEstimate": 1259
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ Bean Validation (`@NotNull`, `@Positive`, `@NotEmpty`)",
+      "✅ Compact Constructor (추가 검증 또는 정규화)",
+      "✅ Javadoc으로 필드 설명",
+      "✅ `from()` 정적 팩토리 메서드",
+      "✅ Domain → DTO 단방향 변환",
+      "✅ Stream API + Record 조합"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/record-patterns/01_dto-with-records.md",
+    "summary": "Auto-generated from 01_dto-with-records.md"
+  }
+}

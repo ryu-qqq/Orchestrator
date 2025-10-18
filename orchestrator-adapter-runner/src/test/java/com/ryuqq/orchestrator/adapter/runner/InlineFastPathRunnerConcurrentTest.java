@@ -197,14 +197,17 @@ class InlineFastPathRunnerConcurrentTest {
             try {
                 // 약간의 딜레이 후 인터럽트 받을 준비
                 Thread.sleep(10);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            try {
                 Thread.currentThread().interrupt();  // 스스로 인터럽트
                 runner.submit(testCommand, timeBudgetMs);
             } catch (RuntimeException e) {
                 // 인터럽트 발생 시 RuntimeException 전파 확인
                 assertThat(e.getMessage()).contains("Polling interrupted");
                 assertThat(Thread.currentThread().isInterrupted()).isTrue();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
         });
 

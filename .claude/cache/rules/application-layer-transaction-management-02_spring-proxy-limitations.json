@@ -1,0 +1,30 @@
+{
+  "id": "application-layer-transaction-management-02_spring-proxy-limitations",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/transaction-management/02_spring-proxy-limitations.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "spring",
+        "proxy",
+        "limitations"
+      ],
+      "secondary": [
+        "spring",
+        "proxy",
+        "limitations"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "critical",
+    "tokenEstimate": 1739
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/transaction-management/02_spring-proxy-limitations.md",
+    "summary": "Auto-generated from 02_spring-proxy-limitations.md"
+  }
+}

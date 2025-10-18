@@ -1,0 +1,39 @@
+{
+  "id": "java21-patterns-sealed-classes-03_result-types",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/sealed-classes/03_result-types.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "result",
+        "types"
+      ],
+      "secondary": [
+        "result",
+        "types",
+        "with",
+        "sealed",
+        "classes",
+        "타입",
+        "안전한",
+        "성공실패",
+        "처리"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 1453
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ 명시적 에러 처리 (모든 에러 타입 컴파일 타임 검증)",
+      "✅ 코드 간결성 (40% 감소)",
+      "✅ Railway-Oriented (함수형 체이닝)"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/sealed-classes/03_result-types.md",
+    "summary": "Auto-generated from 03_result-types.md"
+  }
+}

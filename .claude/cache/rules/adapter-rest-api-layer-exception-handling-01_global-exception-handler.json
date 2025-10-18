@@ -1,0 +1,52 @@
+{
+  "id": "adapter-rest-api-layer-exception-handling-01_global-exception-handler",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/exception-handling/01_global-exception-handler.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "global",
+        "exception",
+        "handler"
+      ],
+      "secondary": [
+        "globalexceptionhandler",
+        "rest",
+        "api",
+        "layer",
+        "전역",
+        "예외",
+        "처리"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "critical",
+    "tokenEstimate": 3027
+  },
+  "rules": {
+    "prohibited": [
+      "❌ 비즈니스 로직 포함",
+      "❌ Domain 구체 타입 의존",
+      "❌ 예외 생성 (Domain/Application에서 생성)",
+      "❌ HTTP 응답 생성",
+      "❌ ErrorResponse DTO 생성",
+      "❌ HTTP 예외 처리",
+      "❌ ErrorResponse 생성"
+    ],
+    "allowed": [
+      "✅ 모든 예외를 HTTP 응답으로 변환",
+      "✅ ErrorResponse DTO 생성",
+      "✅ HTTP 상태 코드 설정",
+      "✅ 로깅",
+      "✅ 비즈니스 예외 정의",
+      "✅ ErrorCode 인터페이스 구현",
+      "✅ HTTP 상태 코드 결정",
+      "✅ 비즈니스 예외 발생",
+      "✅ 트랜잭션 경계 관리"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/exception-handling/01_global-exception-handler.md",
+    "summary": "Auto-generated from 01_global-exception-handler.md"
+  }
+}

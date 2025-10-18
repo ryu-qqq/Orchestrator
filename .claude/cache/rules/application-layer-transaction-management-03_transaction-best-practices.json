@@ -1,0 +1,30 @@
+{
+  "id": "application-layer-transaction-management-03_transaction-best-practices",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/transaction-management/03_transaction-best-practices.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "transaction",
+        "best",
+        "practices"
+      ],
+      "secondary": [
+        "transaction",
+        "best",
+        "practices"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "critical",
+    "tokenEstimate": 1599
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/transaction-management/03_transaction-best-practices.md",
+    "summary": "Auto-generated from 03_transaction-best-practices.md"
+  }
+}

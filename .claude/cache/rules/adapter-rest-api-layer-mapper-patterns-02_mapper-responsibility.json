@@ -1,0 +1,33 @@
+{
+  "id": "adapter-rest-api-layer-mapper-patterns-02_mapper-responsibility",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/mapper-patterns/02_mapper-responsibility.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "mapper",
+        "responsibility"
+      ],
+      "secondary": [
+        "mapper",
+        "responsibility",
+        "mapper",
+        "vs",
+        "assembler",
+        "역할",
+        "구분"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "critical",
+    "tokenEstimate": 2541
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/mapper-patterns/02_mapper-responsibility.md",
+    "summary": "Auto-generated from 02_mapper-responsibility.md"
+  }
+}

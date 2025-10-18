@@ -1,0 +1,31 @@
+{
+  "id": "domain-layer-testing-01_aggregate-testing",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/testing/01_aggregate-testing.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "aggregate",
+        "testing"
+      ],
+      "secondary": [
+        "aggregate",
+        "testing",
+        "aggregate",
+        "단위",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "critical",
+    "tokenEstimate": 577
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/testing/01_aggregate-testing.md",
+    "summary": "Auto-generated from 01_aggregate-testing.md"
+  }
+}

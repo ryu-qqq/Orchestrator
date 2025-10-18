@@ -1,0 +1,51 @@
+{
+  "id": "java21-patterns-virtual-threads-04_spring-integration",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/virtual-threads/04_spring-integration.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "spring",
+        "integration"
+      ],
+      "secondary": [
+        "spring",
+        "integration",
+        "with",
+        "virtual",
+        "threads",
+        "transactional",
+        "async",
+        "통합"
+      ],
+      "anti": [
+        "this.method()",
+        "ThreadLocal"
+      ]
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 2263
+  },
+  "rules": {
+    "prohibited": [
+      "❌ 같은 클래스 내부 메서드 호출 (`this.method()`)은 프록시 우회",
+      "❌ `ThreadLocal`은 Virtual Thread 재사용 시 문제 발생 가능"
+    ],
+    "allowed": [
+      "✅ `@Transactional`은 Virtual Thread에서도 정상 작동",
+      "✅ Spring AOP Proxy가 Virtual Thread와 무관하게 트랜잭션 관리",
+      "✅ ThreadLocal 기반 트랜잭션 컨텍스트는 Virtual Thread에도 유지됨",
+      "✅ `@Transactional`은 **외부 빈 호출**에만 적용",
+      "✅ 별도 빈으로 분리하여 프록시 정상 작동",
+      "✅ `TransactionPhase.AFTER_COMMIT`: Order 저장 트랜잭션 성공 후에만 실행",
+      "✅ `@Async`: 별도 Virtual Thread에서 비동기 실행",
+      "✅ 외부 API 호출은 트랜잭션 밖에서 (성능 향상)",
+      "✅ `ScopedValue` (Java 21+) 사용 권장",
+      "✅ `@TransactionalEventListener`는 Spring이 자동 관리하므로 안전"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/virtual-threads/04_spring-integration.md",
+    "summary": "Auto-generated from 04_spring-integration.md"
+  }
+}

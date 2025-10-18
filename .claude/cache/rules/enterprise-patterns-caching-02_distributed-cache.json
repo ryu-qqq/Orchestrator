@@ -1,0 +1,31 @@
+{
+  "id": "enterprise-patterns-caching-02_distributed-cache",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/07-enterprise-patterns/caching/02_distributed-cache.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "distributed",
+        "cache"
+      ],
+      "secondary": [
+        "distributed",
+        "cache",
+        "redis",
+        "분산",
+        "캐싱"
+      ],
+      "anti": []
+    },
+    "layer": "enterprise",
+    "priority": "high",
+    "tokenEstimate": 1020
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/07-enterprise-patterns/caching/02_distributed-cache.md",
+    "summary": "Auto-generated from 02_distributed-cache.md"
+  }
+}

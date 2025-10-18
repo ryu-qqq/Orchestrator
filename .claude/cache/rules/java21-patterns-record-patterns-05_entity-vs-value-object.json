@@ -1,0 +1,59 @@
+{
+  "id": "java21-patterns-record-patterns-05_entity-vs-value-object",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/record-patterns/05_entity-vs-value-object.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "entity",
+        "vs",
+        "value",
+        "object"
+      ],
+      "secondary": [
+        "entity",
+        "vs",
+        "value",
+        "object",
+        "with",
+        "records",
+        "jpa",
+        "entity와",
+        "domain",
+        "record",
+        "구분"
+      ],
+      "anti": [
+        "order.getCustomer().getAddress()"
+      ]
+    },
+    "layer": "java21",
+    "priority": "critical",
+    "tokenEstimate": 2744
+  },
+  "rules": {
+    "prohibited": [
+      "❌ Law of Demeter 위반 (`order.getCustomer().getAddress()`)",
+      "❌ N+1 쿼리 문제",
+      "❌ Domain이 Framework에 의존",
+      "❌ 불변성 보장 어려움 (Entity는 변경 가능)"
+    ],
+    "allowed": [
+      "✅ `customerId`, `productId`: Long 타입 (Association 금지)",
+      "✅ `@OneToMany`는 예외적으로 허용 (자식 Entity 라이프사이클 관리)",
+      "✅ Entity는 변경 가능 (Mutable)",
+      "✅ Domain과 완전히 분리",
+      "✅ Record로 불변성 보장",
+      "✅ JPA 어노테이션 없음 (Framework 독립)",
+      "✅ 비즈니스 로직 포함 (`approve()`, `cancel()`)",
+      "✅ Law of Demeter 준수 (`getTotalAmountAsMoney()`)",
+      "✅ `toEntity()`: Domain Record → JPA Entity",
+      "✅ `toDomain()`: JPA Entity → Domain Record",
+      "✅ Repository Adapter에서만 변환 책임",
+      "✅ Domain은 JPA 의존성 없음"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/record-patterns/05_entity-vs-value-object.md",
+    "summary": "Auto-generated from 05_entity-vs-value-object.md"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "domain-layer-law-of-demeter-03_domain-encapsulation",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/law-of-demeter/03_domain-encapsulation.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "domain",
+        "encapsulation"
+      ],
+      "secondary": [
+        "domain",
+        "encapsulation",
+        "도메인",
+        "캡슐화와",
+        "불변식"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "critical",
+    "tokenEstimate": 626
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/law-of-demeter/03_domain-encapsulation.md",
+    "summary": "Auto-generated from 03_domain-encapsulation.md"
+  }
+}

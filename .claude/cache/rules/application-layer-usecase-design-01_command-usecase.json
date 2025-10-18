@@ -1,0 +1,31 @@
+{
+  "id": "application-layer-usecase-design-01_command-usecase",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/usecase-design/01_command-usecase.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "command",
+        "usecase"
+      ],
+      "secondary": [
+        "command",
+        "usecase",
+        "상태",
+        "변경",
+        "유스케이스"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "high",
+    "tokenEstimate": 703
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/usecase-design/01_command-usecase.md",
+    "summary": "Auto-generated from 01_command-usecase.md"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "id": "domain-layer-testing-02_value-object-testing",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/testing/02_value-object-testing.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "value",
+        "object",
+        "testing"
+      ],
+      "secondary": [
+        "value",
+        "object",
+        "testing",
+        "불변",
+        "객체",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "high",
+    "tokenEstimate": 458
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/testing/02_value-object-testing.md",
+    "summary": "Auto-generated from 02_value-object-testing.md"
+  }
+}

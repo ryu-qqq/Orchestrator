@@ -1,0 +1,38 @@
+{
+  "id": "enterprise-patterns-resilience-02_retry-and-timeout",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/07-enterprise-patterns/resilience/02_retry-and-timeout.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "retry",
+        "and",
+        "timeout"
+      ],
+      "secondary": [
+        "retry",
+        "and",
+        "timeout",
+        "재시도",
+        "및",
+        "타임아웃",
+        "전략"
+      ],
+      "anti": []
+    },
+    "layer": "enterprise",
+    "priority": "critical",
+    "tokenEstimate": 2733
+  },
+  "rules": {
+    "prohibited": [
+      "❌ **클라이언트 오류**: 400 Bad Request, 401 Unauthorized",
+      "❌ **영구적 장애**: 404 Not Found, 403 Forbidden",
+      "❌ **Idempotent 아님**: POST (중복 생성 위험)"
+    ],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/07-enterprise-patterns/resilience/02_retry-and-timeout.md",
+    "summary": "Auto-generated from 02_retry-and-timeout.md"
+  }
+}

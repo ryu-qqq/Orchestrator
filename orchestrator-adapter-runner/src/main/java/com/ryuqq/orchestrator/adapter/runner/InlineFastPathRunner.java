@@ -128,9 +128,10 @@ public final class InlineFastPathRunner implements Orchestrator {
      * @return OperationHandle (완료 또는 비동기 전환)
      */
     private OperationHandle pollForCompletion(OpId opId, long timeBudgetMs) {
-        long startTime = System.currentTimeMillis();
+        long startTimeNanos = System.nanoTime();
+        long timeBudgetNanos = timeBudgetMs * 1_000_000L; // ms를 ns로 변환
 
-        while (System.currentTimeMillis() - startTime < timeBudgetMs) {
+        while (System.nanoTime() - startTimeNanos < timeBudgetNanos) {
             OperationState state = executor.getState(opId);
 
             if (state.isTerminal()) {
@@ -172,6 +173,13 @@ public final class InlineFastPathRunner implements Orchestrator {
      *
      * <p>InterruptedException 발생 시 현재 스레드의 인터럽트 플래그를 복원하고
      * RuntimeException으로 래핑하여 던집니다.</p>
+     *
+     * <p><strong>성능 고려사항:</strong></p>
+     * <ul>
+     *   <li>현재 구현은 플랫폼 스레드를 블로킹하므로, 고부하 환경에서 스레드 리소스 고갈 가능</li>
+     *   <li>향후 개선 방향: Java 21 Virtual Thread 활용 또는 이벤트 기반 대기 메커니즘</li>
+     *   <li>폴링 간격(기본 10ms)은 CPU 사용량과 반응성 간의 트레이드오프</li>
+     * </ul>
      *
      * @param millis 대기 시간 (밀리초)
      * @throws RuntimeException sleep 중 인터럽트 발생 시

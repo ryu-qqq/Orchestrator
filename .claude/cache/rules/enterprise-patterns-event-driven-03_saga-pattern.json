@@ -1,0 +1,44 @@
+{
+  "id": "enterprise-patterns-event-driven-03_saga-pattern",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/07-enterprise-patterns/event-driven/03_saga-pattern.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "saga",
+        "pattern"
+      ],
+      "secondary": [
+        "saga",
+        "pattern",
+        "분산",
+        "트랜잭션",
+        "조율"
+      ],
+      "anti": []
+    },
+    "layer": "enterprise",
+    "priority": "high",
+    "tokenEstimate": 1652
+  },
+  "rules": {
+    "prohibited": [
+      "❌ DDD 원칙 위반 (하나의 트랜잭션 = 하나의 Aggregate)",
+      "❌ Payment API 실패 시 Order도 롤백 (불필요한 롤백)",
+      "❌ 긴 트랜잭션 (DB 커넥션 점유 시간 길어짐)",
+      "❌ 확장 어려움 (서비스 분리 시 분산 트랜잭션 문제)",
+      "❌ Orchestrator가 모든 서비스 의존 (결합도 높음)",
+      "❌ 전체 흐름 파악 어려움 (Event 추적 필요)",
+      "❌ 순환 의존 위험 (Event 체이닝)"
+    ],
+    "allowed": [
+      "✅ 중앙 집중식 제어 (흐름 파악 쉬움)",
+      "✅ 명시적 보상 로직",
+      "✅ 낮은 결합도 (각 서비스 독립적)",
+      "✅ 확장 용이 (새 서비스 추가 시 Event만 구독)"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/07-enterprise-patterns/event-driven/03_saga-pattern.md",
+    "summary": "Auto-generated from 03_saga-pattern.md"
+  }
+}

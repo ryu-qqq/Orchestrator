@@ -1,0 +1,34 @@
+{
+  "id": "java21-patterns-virtual-threads-02_async-processing",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/virtual-threads/02_async-processing.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "async",
+        "processing"
+      ],
+      "secondary": [
+        "async",
+        "processing",
+        "with",
+        "virtual",
+        "threads",
+        "async",
+        "completablefuture",
+        "최적화"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 1912
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/virtual-threads/02_async-processing.md",
+    "summary": "Auto-generated from 02_async-processing.md"
+  }
+}

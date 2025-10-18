@@ -1,0 +1,40 @@
+{
+  "id": "adapter-rest-api-layer-testing-02_integration-test",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/testing/02_integration-test.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "integration",
+        "test"
+      ],
+      "secondary": [
+        "rest",
+        "api",
+        "통합",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "critical",
+    "tokenEstimate": 3659
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ @SpringBootTest: 전체 Spring Context 로딩",
+      "✅ @AutoConfigureMockMvc: MockMvc 자동 설정",
+      "✅ Repository 주입: DB 상태 검증",
+      "✅ @AfterEach: 테스트 격리 (DB 초기화)",
+      "✅ HTTP + DB 검증: 두 가지 모두 확인",
+      "✅ BDD 스타일 (Given-When-Then)",
+      "✅ 가독성 매우 높음",
+      "✅ JSON Path 검증 간편",
+      "✅ 복잡한 API 테스트에 적합"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/testing/02_integration-test.md",
+    "summary": "Auto-generated from 02_integration-test.md"
+  }
+}

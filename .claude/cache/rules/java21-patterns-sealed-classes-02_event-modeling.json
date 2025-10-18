@@ -1,0 +1,40 @@
+{
+  "id": "java21-patterns-sealed-classes-02_event-modeling",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/sealed-classes/02_event-modeling.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "event",
+        "modeling"
+      ],
+      "secondary": [
+        "event",
+        "modeling",
+        "with",
+        "sealed",
+        "classes",
+        "도메인",
+        "이벤트",
+        "타입",
+        "안전",
+        "모델링"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 1355
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ 코드 간결성 (50% 감소)",
+      "✅ 컴파일 타임 검증 (이벤트 타입 누락 방지)",
+      "✅ 자동 타입 추론 (명시적 캐스팅 불필요)"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/sealed-classes/02_event-modeling.md",
+    "summary": "Auto-generated from 02_event-modeling.md"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "persistence-layer-testing-02_testcontainers-integration",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/04-persistence-layer/testing/02_testcontainers-integration.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "testcontainers",
+        "integration"
+      ],
+      "secondary": [
+        "testcontainers",
+        "integration",
+        "testing",
+        "real",
+        "db"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-persistence",
+    "priority": "high",
+    "tokenEstimate": 1456
+  },
+  "rules": {
+    "prohibited": [
+      "❌ 모든 Repository 메서드를 통합 테스트로 검증 (단위 테스트로 충분)",
+      "❌ Container 재사용 비활성화 (느림)",
+      "❌ 무거운 Docker 이미지 사용 (Alpine 권장)"
+    ],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/04-persistence-layer/testing/02_testcontainers-integration.md",
+    "summary": "Auto-generated from 02_testcontainers-integration.md"
+  }
+}

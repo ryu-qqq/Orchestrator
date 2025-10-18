@@ -1,0 +1,34 @@
+{
+  "id": "java21-patterns-virtual-threads-03_performance-tuning",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/virtual-threads/03_performance-tuning.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "performance",
+        "tuning"
+      ],
+      "secondary": [
+        "performance",
+        "tuning",
+        "virtual",
+        "threads",
+        "성능",
+        "최적화",
+        "및",
+        "모니터링"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 1847
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/virtual-threads/03_performance-tuning.md",
+    "summary": "Auto-generated from 03_performance-tuning.md"
+  }
+}

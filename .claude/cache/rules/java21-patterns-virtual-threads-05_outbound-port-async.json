@@ -1,0 +1,52 @@
+{
+  "id": "java21-patterns-virtual-threads-05_outbound-port-async",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/virtual-threads/05_outbound-port-async.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "outbound",
+        "port",
+        "async"
+      ],
+      "secondary": [
+        "outbound",
+        "port",
+        "async",
+        "pattern",
+        "외부",
+        "api",
+        "비동기",
+        "호출"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 2271
+  },
+  "rules": {
+    "prohibited": [
+      "❌ 외부 API 호출이 트랜잭션 내부 (5-10초 소요 가능)",
+      "❌ DB Connection 장시간 점유",
+      "❌ 트랜잭션 타임아웃 위험",
+      "❌ 외부 API 실패 시 트랜잭션 롤백"
+    ],
+    "allowed": [
+      "✅ `@Async`로 Virtual Thread에서 실행",
+      "✅ `CompletableFuture`로 비동기 결과 반환",
+      "✅ RestClient 사용 (Spring Boot 3.2+)",
+      "✅ 외부 API 호출은 트랜잭션 밖",
+      "✅ **트랜잭션 내**: Order 저장만 (1-2초)",
+      "✅ **트랜잭션 외**: 외부 API 호출 (비동기)",
+      "✅ 병렬 실행: `inventoryPort`, `notificationPort` 동시 호출",
+      "✅ Fire-and-Forget: 외부 API 완료 대기 없이 즉시 반환",
+      "✅ **RestClient 권장**: Virtual Threads와 함께 사용 시 간결하고 성능 우수",
+      "✅ **WebClient**: Reactive 파이프라인 필요 시만 사용",
+      "✅ 둘 다 Virtual Thread에서 실행 가능"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/virtual-threads/05_outbound-port-async.md",
+    "summary": "Auto-generated from 05_outbound-port-async.md"
+  }
+}

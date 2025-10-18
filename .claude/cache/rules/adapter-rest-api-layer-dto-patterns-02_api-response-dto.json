@@ -1,0 +1,41 @@
+{
+  "id": "adapter-rest-api-layer-dto-patterns-02_api-response-dto",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/dto-patterns/02_api-response-dto.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "api",
+        "response",
+        "dto"
+      ],
+      "secondary": [
+        "api",
+        "response",
+        "dto",
+        "api",
+        "응답",
+        "dto",
+        "설계",
+        "패턴"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "critical",
+    "tokenEstimate": 2935
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ **Java Record**: 불변성 보장",
+      "✅ **Api Suffix**: `OrderApiResponse` 네이밍",
+      "✅ **Jackson 최적화**: `@JsonFormat`으로 날짜 형식 지정",
+      "✅ **Primitive 타입 변환**: `BigDecimal` → `String` (JSON 정밀도 유지)",
+      "✅ **Javadoc**: 각 필드 설명 및 변환 흐름"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/dto-patterns/02_api-response-dto.md",
+    "summary": "Auto-generated from 02_api-response-dto.md"
+  }
+}

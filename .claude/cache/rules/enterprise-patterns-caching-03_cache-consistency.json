@@ -1,0 +1,35 @@
+{
+  "id": "enterprise-patterns-caching-03_cache-consistency",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/07-enterprise-patterns/caching/03_cache-consistency.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "cache",
+        "consistency"
+      ],
+      "secondary": [
+        "cache",
+        "consistency",
+        "캐시",
+        "일관성",
+        "관리"
+      ],
+      "anti": []
+    },
+    "layer": "enterprise",
+    "priority": "high",
+    "tokenEstimate": 1144
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": [
+      "✅ 비즈니스 로직과 캐시 관리 분리 (SRP)",
+      "✅ 여러 캐시를 한 번에 관리 (확장성)",
+      "✅ 비동기 처리 가능"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/07-enterprise-patterns/caching/03_cache-consistency.md",
+    "summary": "Auto-generated from 03_cache-consistency.md"
+  }
+}

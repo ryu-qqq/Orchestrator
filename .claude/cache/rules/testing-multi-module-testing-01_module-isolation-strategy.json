@@ -1,0 +1,49 @@
+{
+  "id": "testing-multi-module-testing-01_module-isolation-strategy",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/05-testing/multi-module-testing/01_module-isolation-strategy.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "module",
+        "isolation",
+        "strategy"
+      ],
+      "secondary": [
+        "멀티모듈",
+        "테스트",
+        "격리",
+        "전략"
+      ],
+      "anti": []
+    },
+    "layer": "testing",
+    "priority": "critical",
+    "tokenEstimate": 2594
+  },
+  "rules": {
+    "prohibited": [
+      "❌ Spring Context 로딩 금지",
+      "❌ 외부 라이브러리 의존성 금지 (JPA, Jackson 등)",
+      "❌ 실제 Adapter 구현체 사용 금지",
+      "❌ Domain/Application 로직 재테스트 금지"
+    ],
+    "allowed": [
+      "✅ **빠른 피드백**: Domain 테스트는 외부 의존성 없이 밀리초 단위 실행",
+      "✅ **명확한 책임**: 각 레이어의 테스트 책임이 명확히 분리됨",
+      "✅ **유지보수성**: 한 모듈의 변경이 다른 모듈 테스트에 영향 최소화",
+      "✅ **CI/CD 최적화**: 레이어별 선택적 테스트 실행 가능",
+      "✅ Pure Java 단위 테스트만 허용",
+      "✅ AssertJ, JUnit 5만 사용",
+      "✅ Spring Context 로딩 허용 (선택적)",
+      "✅ Outbound Port mocking (Mockito, MockK)",
+      "✅ `@MockBean`, `@SpyBean` 활용",
+      "✅ Spring Context 전체 로딩",
+      "✅ Testcontainers, 실제 DB/Redis 사용",
+      "✅ 실제 HTTP 클라이언트, 메시징 시스템 사용"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/05-testing/multi-module-testing/01_module-isolation-strategy.md",
+    "summary": "Auto-generated from 01_module-isolation-strategy.md"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "domain-layer-testing-06_policy-testing",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/testing/06_policy-testing.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "policy",
+        "testing"
+      ],
+      "secondary": [
+        "policy",
+        "testing",
+        "도메인",
+        "정책",
+        "객체",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "critical",
+    "tokenEstimate": 1489
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/testing/06_policy-testing.md",
+    "summary": "Auto-generated from 06_policy-testing.md"
+  }
+}

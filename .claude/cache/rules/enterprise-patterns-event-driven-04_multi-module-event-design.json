@@ -1,0 +1,36 @@
+{
+  "id": "enterprise-patterns-event-driven-04_multi-module-event-design",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/07-enterprise-patterns/event-driven/04_multi-module-event-design.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "multi",
+        "module",
+        "event",
+        "design"
+      ],
+      "secondary": [
+        "multi",
+        "module",
+        "event",
+        "design",
+        "멀티모듈",
+        "이벤트",
+        "설계",
+        "규칙"
+      ],
+      "anti": []
+    },
+    "layer": "enterprise",
+    "priority": "critical",
+    "tokenEstimate": 2375
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/07-enterprise-patterns/event-driven/04_multi-module-event-design.md",
+    "summary": "Auto-generated from 04_multi-module-event-design.md"
+  }
+}

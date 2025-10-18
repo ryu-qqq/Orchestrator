@@ -1,0 +1,33 @@
+{
+  "id": "adapter-rest-api-layer-dto-patterns-03_error-response",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/01-adapter-rest-api-layer/dto-patterns/03_error-response.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "error",
+        "response"
+      ],
+      "secondary": [
+        "error",
+        "response",
+        "dto",
+        "에러",
+        "응답",
+        "dto",
+        "표준화"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-rest",
+    "priority": "critical",
+    "tokenEstimate": 2550
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/01-adapter-rest-api-layer/dto-patterns/03_error-response.md",
+    "summary": "Auto-generated from 03_error-response.md"
+  }
+}

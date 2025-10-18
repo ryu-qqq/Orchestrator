@@ -1,0 +1,48 @@
+{
+  "id": "java21-patterns-sealed-classes-05_exception-hierarchy",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/sealed-classes/05_exception-hierarchy.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "exception",
+        "hierarchy"
+      ],
+      "secondary": [
+        "exception",
+        "hierarchy",
+        "with",
+        "sealed",
+        "classes",
+        "도메인",
+        "예외",
+        "계층",
+        "구조"
+      ],
+      "anti": [
+        "RuntimeException"
+      ]
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 2299
+  },
+  "rules": {
+    "prohibited": [
+      "❌ 예외 타입 예측 불가 (모두 `RuntimeException`)",
+      "❌ 컴파일 타임 검증 불가",
+      "❌ HTTP Status Code 결정 어려움",
+      "❌ 예외 처리 누락 가능"
+    ],
+    "allowed": [
+      "✅ Pattern Matching으로 **모든 예외 타입 처리** 강제",
+      "✅ 예외별 **적절한 HTTP Status** 매핑",
+      "✅ `ValidationException` → 400 Bad Request",
+      "✅ `BusinessRuleException` → 409 Conflict / 404 Not Found",
+      "✅ `InfrastructureException` → 500 Internal Server Error"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/sealed-classes/05_exception-hierarchy.md",
+    "summary": "Auto-generated from 05_exception-hierarchy.md"
+  }
+}

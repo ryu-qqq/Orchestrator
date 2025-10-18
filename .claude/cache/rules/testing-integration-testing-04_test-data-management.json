@@ -1,0 +1,30 @@
+{
+  "id": "testing-integration-testing-04_test-data-management",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/05-testing/integration-testing/04_test-data-management.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "test",
+        "data",
+        "management"
+      ],
+      "secondary": [
+        "테스트",
+        "데이터",
+        "관리"
+      ],
+      "anti": []
+    },
+    "layer": "testing",
+    "priority": "medium",
+    "tokenEstimate": 2281
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/05-testing/integration-testing/04_test-data-management.md",
+    "summary": "Auto-generated from 04_test-data-management.md"
+  }
+}

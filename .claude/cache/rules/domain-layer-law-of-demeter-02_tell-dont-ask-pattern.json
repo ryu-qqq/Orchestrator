@@ -1,0 +1,34 @@
+{
+  "id": "domain-layer-law-of-demeter-02_tell-dont-ask-pattern",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/law-of-demeter/02_tell-dont-ask-pattern.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "tell",
+        "dont",
+        "ask",
+        "pattern"
+      ],
+      "secondary": [
+        "tell",
+        "dont",
+        "ask",
+        "묻지",
+        "말고",
+        "시켜라"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "critical",
+    "tokenEstimate": 479
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/law-of-demeter/02_tell-dont-ask-pattern.md",
+    "summary": "Auto-generated from 02_tell-dont-ask-pattern.md"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "application-layer-dto-patterns-02_command-query-dto",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/03-application-layer/dto-patterns/02_command-query-dto.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "command",
+        "query",
+        "dto"
+      ],
+      "secondary": [
+        "commandquery",
+        "dto",
+        "cqrs",
+        "패턴",
+        "dto"
+      ],
+      "anti": []
+    },
+    "layer": "application",
+    "priority": "high",
+    "tokenEstimate": 1367
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/03-application-layer/dto-patterns/02_command-query-dto.md",
+    "summary": "Auto-generated from 02_command-query-dto.md"
+  }
+}

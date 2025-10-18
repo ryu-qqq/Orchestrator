@@ -1,0 +1,48 @@
+{
+  "id": "java21-patterns-record-patterns-04_usecase-inner-record",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/06-java21-patterns/record-patterns/04_usecase-inner-record.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "usecase",
+        "inner",
+        "record"
+      ],
+      "secondary": [
+        "usecase",
+        "inner",
+        "record",
+        "commandresponse",
+        "내부",
+        "record",
+        "패턴"
+      ],
+      "anti": []
+    },
+    "layer": "java21",
+    "priority": "high",
+    "tokenEstimate": 2078
+  },
+  "rules": {
+    "prohibited": [
+      "❌ Command/Response가 UseCase와 분리되어 응집도 저하",
+      "❌ 패키지 구조가 복잡해짐 (dto 패키지 추가 필요)",
+      "❌ 어떤 UseCase의 DTO인지 불명확",
+      "❌ 다른 UseCase에서 잘못 재사용 가능 (결합도 증가)"
+    ],
+    "allowed": [
+      "✅ `Command`와 `Response`가 UseCase 내부에 Inner Record로 정의",
+      "✅ `CreateOrderUseCase.Command`로 명확한 참조",
+      "✅ Compact Constructor에서 입력 검증",
+      "✅ 중첩 Record (`OrderItem`)로 복잡한 구조 표현",
+      "✅ 방어적 복사 (`List.copyOf()`)로 불변성 보장",
+      "✅ **REST DTO** (`CreateOrderRequest/Response`): 외부 API 스펙",
+      "✅ **UseCase Record** (`Command/Response`): Application Layer 내부 DTO",
+      "✅ Controller에서 변환 책임 (Mapper/Assembler는 Domain ↔ UseCase만 담당)"
+    ]
+  },
+  "documentation": {
+    "path": "docs/coding_convention/06-java21-patterns/record-patterns/04_usecase-inner-record.md",
+    "summary": "Auto-generated from 04_usecase-inner-record.md"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "persistence-layer-repository-patterns-02_custom-repository",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/04-persistence-layer/repository-patterns/02_custom-repository.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "custom",
+        "repository"
+      ],
+      "secondary": [
+        "custom",
+        "repository",
+        "사용자",
+        "정의",
+        "repository"
+      ],
+      "anti": []
+    },
+    "layer": "adapter-persistence",
+    "priority": "high",
+    "tokenEstimate": 304
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/04-persistence-layer/repository-patterns/02_custom-repository.md",
+    "summary": "Auto-generated from 02_custom-repository.md"
+  }
+}

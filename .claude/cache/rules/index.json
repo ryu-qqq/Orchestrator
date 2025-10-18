@@ -1,0 +1,623 @@
+{
+  "version": "1.0.0",
+  "buildDate": "2025-10-18T02:55:52.723545Z",
+  "totalRules": 96,
+  "keywordIndex": {
+    "restful": [
+      "adapter-rest-api-layer-controller-design-01_restful-api-design"
+    ],
+    "api": [
+      "adapter-rest-api-layer-controller-design-01_restful-api-design",
+      "adapter-rest-api-layer-dto-patterns-01_api-request-dto",
+      "adapter-rest-api-layer-dto-patterns-02_api-response-dto",
+      "adapter-rest-api-layer-mapper-patterns-01_api-to-usecase-mapper",
+      "testing-integration-testing-02_api-integration-tests"
+    ],
+    "design": [
+      "adapter-rest-api-layer-controller-design-01_restful-api-design",
+      "domain-layer-aggregate-design-02_aggregate-root-design",
+      "enterprise-patterns-event-driven-04_multi-module-event-design",
+      "error-handling-02_domain-exception-design"
+    ],
+    "request": [
+      "adapter-rest-api-layer-controller-design-02_request-validation",
+      "adapter-rest-api-layer-dto-patterns-01_api-request-dto",
+      "application-layer-dto-patterns-01_request-response-dto"
+    ],
+    "validation": [
+      "adapter-rest-api-layer-controller-design-02_request-validation",
+      "adapter-rest-api-layer-exception-handling-03_validation-exception",
+      "application-layer-dto-patterns-03_dto-validation"
+    ],
+    "response": [
+      "adapter-rest-api-layer-controller-design-03_response-handling",
+      "adapter-rest-api-layer-dto-patterns-02_api-response-dto",
+      "adapter-rest-api-layer-dto-patterns-03_error-response",
+      "application-layer-dto-patterns-01_request-response-dto",
+      "error-handling-04_error-response-format"
+    ],
+    "handling": [
+      "adapter-rest-api-layer-controller-design-03_response-handling",
+      "error-handling-01_error-handling-strategy"
+    ],
+    "dto": [
+      "adapter-rest-api-layer-dto-patterns-01_api-request-dto",
+      "adapter-rest-api-layer-dto-patterns-02_api-response-dto",
+      "application-layer-assembler-pattern-02_usecase-inner-dto",
+      "application-layer-dto-patterns-01_request-response-dto",
+      "application-layer-dto-patterns-02_command-query-dto",
+      "application-layer-dto-patterns-03_dto-validation",
+      "persistence-layer-querydsl-optimization-01_dto-projection",
+      "java21-patterns-record-patterns-01_dto-with-records"
+    ],
+    "error": [
+      "adapter-rest-api-layer-dto-patterns-03_error-response",
+      "adapter-rest-api-layer-exception-handling-02_custom-error-codes",
+      "error-handling-01_error-handling-strategy",
+      "error-handling-04_error-response-format"
+    ],
+    "global": [
+      "adapter-rest-api-layer-exception-handling-01_global-exception-handler",
+      "error-handling-03_global-exception-handler"
+    ],
+    "exception": [
+      "adapter-rest-api-layer-exception-handling-01_global-exception-handler",
+      "adapter-rest-api-layer-exception-handling-03_validation-exception",
+      "java21-patterns-sealed-classes-05_exception-hierarchy",
+      "error-handling-02_domain-exception-design",
+      "error-handling-03_global-exception-handler"
+    ],
+    "handler": [
+      "adapter-rest-api-layer-exception-handling-01_global-exception-handler",
+      "error-handling-03_global-exception-handler"
+    ],
+    "custom": [
+      "adapter-rest-api-layer-exception-handling-02_custom-error-codes",
+      "persistence-layer-repository-patterns-02_custom-repository"
+    ],
+    "codes": [
+      "adapter-rest-api-layer-exception-handling-02_custom-error-codes"
+    ],
+    "to": [
+      "adapter-rest-api-layer-mapper-patterns-01_api-to-usecase-mapper"
+    ],
+    "usecase": [
+      "adapter-rest-api-layer-mapper-patterns-01_api-to-usecase-mapper",
+      "application-layer-assembler-pattern-02_usecase-inner-dto",
+      "application-layer-usecase-design-01_command-usecase",
+      "application-layer-usecase-design-02_query-usecase",
+      "java21-patterns-record-patterns-04_usecase-inner-record"
+    ],
+    "mapper": [
+      "adapter-rest-api-layer-mapper-patterns-01_api-to-usecase-mapper",
+      "adapter-rest-api-layer-mapper-patterns-02_mapper-responsibility"
+    ],
+    "responsibility": [
+      "adapter-rest-api-layer-mapper-patterns-02_mapper-responsibility",
+      "application-layer-assembler-pattern-01_assembler-responsibility"
+    ],
+    "rest_api_package_guide": [
+      "adapter-rest-api-layer-package-guide-01_rest_api_package_guide"
+    ],
+    "controller": [
+      "adapter-rest-api-layer-testing-01_controller-unit-test"
+    ],
+    "unit": [
+      "adapter-rest-api-layer-testing-01_controller-unit-test",
+      "persistence-layer-testing-01_repository-unit-testing"
+    ],
+    "test": [
+      "adapter-rest-api-layer-testing-01_controller-unit-test",
+      "adapter-rest-api-layer-testing-02_integration-test",
+      "persistence-layer-testing-03_test-tags-strategy",
+      "testing-integration-testing-04_test-data-management",
+      "testing-multi-module-testing-02_shared-test-fixtures",
+      "testing-multi-module-testing-04_test-tags-and-execution"
+    ],
+    "integration": [
+      "adapter-rest-api-layer-testing-02_integration-test",
+      "persistence-layer-testing-02_testcontainers-integration",
+      "testing-integration-testing-02_api-integration-tests",
+      "testing-multi-module-testing-03_cross-module-integration",
+      "java21-patterns-virtual-threads-04_spring-integration"
+    ],
+    "rest": [
+      "adapter-rest-api-layer-testing-03_rest-docs"
+    ],
+    "docs": [
+      "adapter-rest-api-layer-testing-03_rest-docs"
+    ],
+    "aggregate": [
+      "domain-layer-aggregate-design-01_aggregate-boundaries",
+      "domain-layer-aggregate-design-02_aggregate-root-design",
+      "domain-layer-testing-01_aggregate-testing",
+      "persistence-layer-repository-patterns-01_aggregate-repository",
+      "java21-patterns-sealed-classes-04_aggregate-state-modeling"
+    ],
+    "boundaries": [
+      "domain-layer-aggregate-design-01_aggregate-boundaries",
+      "domain-layer-aggregate-design-03_consistency-boundaries",
+      "application-layer-transaction-management-01_transaction-boundaries"
+    ],
+    "root": [
+      "domain-layer-aggregate-design-02_aggregate-root-design"
+    ],
+    "consistency": [
+      "domain-layer-aggregate-design-03_consistency-boundaries",
+      "enterprise-patterns-caching-03_cache-consistency"
+    ],
+    "getter": [
+      "domain-layer-law-of-demeter-01_getter-chaining-prohibition"
+    ],
+    "chaining": [
+      "domain-layer-law-of-demeter-01_getter-chaining-prohibition"
+    ],
+    "prohibition": [
+      "domain-layer-law-of-demeter-01_getter-chaining-prohibition"
+    ],
+    "tell": [
+      "domain-layer-law-of-demeter-02_tell-dont-ask-pattern"
+    ],
+    "dont": [
+      "domain-layer-law-of-demeter-02_tell-dont-ask-pattern"
+    ],
+    "ask": [
+      "domain-layer-law-of-demeter-02_tell-dont-ask-pattern"
+    ],
+    "pattern": [
+      "domain-layer-law-of-demeter-02_tell-dont-ask-pattern",
+      "application-layer-usecase-design-03_orchestration-pattern",
+      "persistence-layer-repository-patterns-03_specification-pattern",
+      "java21-patterns-record-patterns-03_pattern-matching",
+      "enterprise-patterns-event-driven-03_saga-pattern",
+      "enterprise-patterns-resilience-03_bulkhead-pattern"
+    ],
+    "domain": [
+      "domain-layer-law-of-demeter-03_domain-encapsulation",
+      "domain-layer-testing-05_domain-event-testing",
+      "java21-patterns-sealed-classes-01_domain-modeling",
+      "enterprise-patterns-event-driven-01_domain-events",
+      "error-handling-02_domain-exception-design"
+    ],
+    "encapsulation": [
+      "domain-layer-law-of-demeter-03_domain-encapsulation"
+    ],
+    "domain_package_guide": [
+      "domain-layer-package-guide-01_domain_package_guide"
+    ],
+    "testing": [
+      "domain-layer-testing-00_testing-support-toolkit",
+      "domain-layer-testing-01_aggregate-testing",
+      "domain-layer-testing-02_value-object-testing",
+      "domain-layer-testing-04_factory-testing",
+      "domain-layer-testing-05_domain-event-testing",
+      "domain-layer-testing-06_policy-testing",
+      "application-layer-testing-01_application-service-testing",
+      "persistence-layer-testing-01_repository-unit-testing"
+    ],
+    "support": [
+      "domain-layer-testing-00_testing-support-toolkit"
+    ],
+    "toolkit": [
+      "domain-layer-testing-00_testing-support-toolkit"
+    ],
+    "value": [
+      "domain-layer-testing-02_value-object-testing",
+      "java21-patterns-record-patterns-02_value-objects-with-records",
+      "java21-patterns-record-patterns-05_entity-vs-value-object"
+    ],
+    "object": [
+      "domain-layer-testing-02_value-object-testing",
+      "java21-patterns-record-patterns-05_entity-vs-value-object"
+    ],
+    "factory": [
+      "domain-layer-testing-04_factory-testing"
+    ],
+    "event": [
+      "domain-layer-testing-05_domain-event-testing",
+      "java21-patterns-sealed-classes-02_event-modeling",
+      "enterprise-patterns-event-driven-02_event-sourcing",
+      "enterprise-patterns-event-driven-04_multi-module-event-design"
+    ],
+    "policy": [
+      "domain-layer-testing-06_policy-testing"
+    ],
+    "assembler": [
+      "application-layer-assembler-pattern-01_assembler-responsibility"
+    ],
+    "inner": [
+      "application-layer-assembler-pattern-02_usecase-inner-dto",
+      "java21-patterns-record-patterns-04_usecase-inner-record"
+    ],
+    "command": [
+      "application-layer-dto-patterns-02_command-query-dto",
+      "application-layer-usecase-design-01_command-usecase"
+    ],
+    "query": [
+      "application-layer-dto-patterns-02_command-query-dto",
+      "application-layer-usecase-design-02_query-usecase",
+      "persistence-layer-querydsl-optimization-02_dynamic-query"
+    ],
+    "application_package_guide": [
+      "application-layer-package-guide-01_application_package_guide"
+    ],
+    "application": [
+      "application-layer-testing-01_application-service-testing"
+    ],
+    "service": [
+      "application-layer-testing-01_application-service-testing"
+    ],
+    "transaction": [
+      "application-layer-transaction-management-01_transaction-boundaries",
+      "application-layer-transaction-management-03_transaction-best-practices"
+    ],
+    "spring": [
+      "application-layer-transaction-management-02_spring-proxy-limitations",
+      "java21-patterns-virtual-threads-04_spring-integration"
+    ],
+    "proxy": [
+      "application-layer-transaction-management-02_spring-proxy-limitations"
+    ],
+    "limitations": [
+      "application-layer-transaction-management-02_spring-proxy-limitations"
+    ],
+    "best": [
+      "application-layer-transaction-management-03_transaction-best-practices"
+    ],
+    "practices": [
+      "application-layer-transaction-management-03_transaction-best-practices"
+    ],
+    "orchestration": [
+      "application-layer-usecase-design-03_orchestration-pattern"
+    ],
+    "long": [
+      "persistence-layer-jpa-entity-design-01_long-fk-strategy"
+    ],
+    "fk": [
+      "persistence-layer-jpa-entity-design-01_long-fk-strategy"
+    ],
+    "strategy": [
+      "persistence-layer-jpa-entity-design-01_long-fk-strategy",
+      "persistence-layer-testing-03_test-tags-strategy",
+      "testing-multi-module-testing-01_module-isolation-strategy",
+      "error-handling-01_error-handling-strategy"
+    ],
+    "entity": [
+      "persistence-layer-jpa-entity-design-02_entity-immutability",
+      "java21-patterns-record-patterns-05_entity-vs-value-object"
+    ],
+    "immutability": [
+      "persistence-layer-jpa-entity-design-02_entity-immutability"
+    ],
+    "n": [
+      "persistence-layer-jpa-entity-design-03_n-plus-one-prevention"
+    ],
+    "plus": [
+      "persistence-layer-jpa-entity-design-03_n-plus-one-prevention"
+    ],
+    "one": [
+      "persistence-layer-jpa-entity-design-03_n-plus-one-prevention"
+    ],
+    "prevention": [
+      "persistence-layer-jpa-entity-design-03_n-plus-one-prevention"
+    ],
+    "persistence_package_guide": [
+      "persistence-layer-package-guide-01_persistence_package_guide"
+    ],
+    "projection": [
+      "persistence-layer-querydsl-optimization-01_dto-projection"
+    ],
+    "dynamic": [
+      "persistence-layer-querydsl-optimization-02_dynamic-query"
+    ],
+    "batch": [
+      "persistence-layer-querydsl-optimization-03_batch-processing"
+    ],
+    "processing": [
+      "persistence-layer-querydsl-optimization-03_batch-processing",
+      "java21-patterns-virtual-threads-02_async-processing"
+    ],
+    "repository": [
+      "persistence-layer-repository-patterns-01_aggregate-repository",
+      "persistence-layer-repository-patterns-02_custom-repository",
+      "persistence-layer-testing-01_repository-unit-testing"
+    ],
+    "specification": [
+      "persistence-layer-repository-patterns-03_specification-pattern"
+    ],
+    "testcontainers": [
+      "persistence-layer-testing-02_testcontainers-integration",
+      "testing-integration-testing-01_testcontainers-setup"
+    ],
+    "tags": [
+      "persistence-layer-testing-03_test-tags-strategy",
+      "testing-multi-module-testing-04_test-tags-and-execution"
+    ],
+    "layer": [
+      "testing-archunit-rules-01_layer-dependency-rules"
+    ],
+    "dependency": [
+      "testing-archunit-rules-01_layer-dependency-rules"
+    ],
+    "rules": [
+      "testing-archunit-rules-01_layer-dependency-rules",
+      "testing-archunit-rules-02_naming-convention-rules",
+      "testing-archunit-rules-03_annotation-rules"
+    ],
+    "naming": [
+      "testing-archunit-rules-02_naming-convention-rules"
+    ],
+    "convention": [
+      "testing-archunit-rules-02_naming-convention-rules"
+    ],
+    "annotation": [
+      "testing-archunit-rules-03_annotation-rules"
+    ],
+    "setup": [
+      "testing-integration-testing-01_testcontainers-setup"
+    ],
+    "tests": [
+      "testing-integration-testing-02_api-integration-tests",
+      "testing-integration-testing-03_persistence-tests"
+    ],
+    "persistence": [
+      "testing-integration-testing-03_persistence-tests"
+    ],
+    "data": [
+      "testing-integration-testing-04_test-data-management"
+    ],
+    "management": [
+      "testing-integration-testing-04_test-data-management",
+      "error-handling-05_errorcode-management"
+    ],
+    "performance": [
+      "testing-integration-testing-05_performance-and-benchmark",
+      "java21-patterns-virtual-threads-03_performance-tuning"
+    ],
+    "and": [
+      "testing-integration-testing-05_performance-and-benchmark",
+      "testing-multi-module-testing-04_test-tags-and-execution",
+      "enterprise-patterns-resilience-02_retry-and-timeout"
+    ],
+    "benchmark": [
+      "testing-integration-testing-05_performance-and-benchmark"
+    ],
+    "module": [
+      "testing-multi-module-testing-01_module-isolation-strategy",
+      "testing-multi-module-testing-03_cross-module-integration",
+      "enterprise-patterns-event-driven-04_multi-module-event-design"
+    ],
+    "isolation": [
+      "testing-multi-module-testing-01_module-isolation-strategy"
+    ],
+    "shared": [
+      "testing-multi-module-testing-02_shared-test-fixtures"
+    ],
+    "fixtures": [
+      "testing-multi-module-testing-02_shared-test-fixtures"
+    ],
+    "cross": [
+      "testing-multi-module-testing-03_cross-module-integration"
+    ],
+    "execution": [
+      "testing-multi-module-testing-04_test-tags-and-execution"
+    ],
+    "with": [
+      "java21-patterns-record-patterns-01_dto-with-records",
+      "java21-patterns-record-patterns-02_value-objects-with-records"
+    ],
+    "records": [
+      "java21-patterns-record-patterns-01_dto-with-records",
+      "java21-patterns-record-patterns-02_value-objects-with-records"
+    ],
+    "objects": [
+      "java21-patterns-record-patterns-02_value-objects-with-records"
+    ],
+    "matching": [
+      "java21-patterns-record-patterns-03_pattern-matching"
+    ],
+    "record": [
+      "java21-patterns-record-patterns-04_usecase-inner-record"
+    ],
+    "vs": [
+      "java21-patterns-record-patterns-05_entity-vs-value-object"
+    ],
+    "modeling": [
+      "java21-patterns-sealed-classes-01_domain-modeling",
+      "java21-patterns-sealed-classes-02_event-modeling",
+      "java21-patterns-sealed-classes-04_aggregate-state-modeling"
+    ],
+    "result": [
+      "java21-patterns-sealed-classes-03_result-types"
+    ],
+    "types": [
+      "java21-patterns-sealed-classes-03_result-types"
+    ],
+    "state": [
+      "java21-patterns-sealed-classes-04_aggregate-state-modeling"
+    ],
+    "hierarchy": [
+      "java21-patterns-sealed-classes-05_exception-hierarchy"
+    ],
+    "virtual": [
+      "java21-patterns-virtual-threads-01_virtual-threads-basics"
+    ],
+    "threads": [
+      "java21-patterns-virtual-threads-01_virtual-threads-basics"
+    ],
+    "basics": [
+      "java21-patterns-virtual-threads-01_virtual-threads-basics"
+    ],
+    "async": [
+      "java21-patterns-virtual-threads-02_async-processing",
+      "java21-patterns-virtual-threads-05_outbound-port-async"
+    ],
+    "tuning": [
+      "java21-patterns-virtual-threads-03_performance-tuning"
+    ],
+    "outbound": [
+      "java21-patterns-virtual-threads-05_outbound-port-async"
+    ],
+    "port": [
+      "java21-patterns-virtual-threads-05_outbound-port-async"
+    ],
+    "cache": [
+      "enterprise-patterns-caching-01_cache-strategies",
+      "enterprise-patterns-caching-02_distributed-cache",
+      "enterprise-patterns-caching-03_cache-consistency"
+    ],
+    "strategies": [
+      "enterprise-patterns-caching-01_cache-strategies"
+    ],
+    "distributed": [
+      "enterprise-patterns-caching-02_distributed-cache"
+    ],
+    "events": [
+      "enterprise-patterns-event-driven-01_domain-events"
+    ],
+    "sourcing": [
+      "enterprise-patterns-event-driven-02_event-sourcing"
+    ],
+    "saga": [
+      "enterprise-patterns-event-driven-03_saga-pattern"
+    ],
+    "multi": [
+      "enterprise-patterns-event-driven-04_multi-module-event-design"
+    ],
+    "circuit": [
+      "enterprise-patterns-resilience-01_circuit-breaker"
+    ],
+    "breaker": [
+      "enterprise-patterns-resilience-01_circuit-breaker"
+    ],
+    "retry": [
+      "enterprise-patterns-resilience-02_retry-and-timeout"
+    ],
+    "timeout": [
+      "enterprise-patterns-resilience-02_retry-and-timeout"
+    ],
+    "bulkhead": [
+      "enterprise-patterns-resilience-03_bulkhead-pattern"
+    ],
+    "format": [
+      "error-handling-04_error-response-format"
+    ],
+    "errorcode": [
+      "error-handling-05_errorcode-management"
+    ]
+  },
+  "layerIndex": {
+    "domain": [
+      "domain-layer-aggregate-design-01_aggregate-boundaries",
+      "domain-layer-aggregate-design-02_aggregate-root-design",
+      "domain-layer-aggregate-design-03_consistency-boundaries",
+      "domain-layer-law-of-demeter-01_getter-chaining-prohibition",
+      "domain-layer-law-of-demeter-02_tell-dont-ask-pattern",
+      "domain-layer-law-of-demeter-03_domain-encapsulation",
+      "domain-layer-package-guide-01_domain_package_guide",
+      "domain-layer-testing-00_testing-support-toolkit",
+      "domain-layer-testing-01_aggregate-testing",
+      "domain-layer-testing-02_value-object-testing",
+      "domain-layer-testing-04_factory-testing",
+      "domain-layer-testing-05_domain-event-testing",
+      "domain-layer-testing-06_policy-testing"
+    ],
+    "application": [
+      "application-layer-assembler-pattern-01_assembler-responsibility",
+      "application-layer-assembler-pattern-02_usecase-inner-dto",
+      "application-layer-dto-patterns-01_request-response-dto",
+      "application-layer-dto-patterns-02_command-query-dto",
+      "application-layer-dto-patterns-03_dto-validation",
+      "application-layer-package-guide-01_application_package_guide",
+      "application-layer-testing-01_application-service-testing",
+      "application-layer-transaction-management-01_transaction-boundaries",
+      "application-layer-transaction-management-02_spring-proxy-limitations",
+      "application-layer-transaction-management-03_transaction-best-practices",
+      "application-layer-usecase-design-01_command-usecase",
+      "application-layer-usecase-design-02_query-usecase",
+      "application-layer-usecase-design-03_orchestration-pattern"
+    ],
+    "adapter-rest": [
+      "adapter-rest-api-layer-controller-design-01_restful-api-design",
+      "adapter-rest-api-layer-controller-design-02_request-validation",
+      "adapter-rest-api-layer-controller-design-03_response-handling",
+      "adapter-rest-api-layer-dto-patterns-01_api-request-dto",
+      "adapter-rest-api-layer-dto-patterns-02_api-response-dto",
+      "adapter-rest-api-layer-dto-patterns-03_error-response",
+      "adapter-rest-api-layer-exception-handling-01_global-exception-handler",
+      "adapter-rest-api-layer-exception-handling-02_custom-error-codes",
+      "adapter-rest-api-layer-exception-handling-03_validation-exception",
+      "adapter-rest-api-layer-mapper-patterns-01_api-to-usecase-mapper",
+      "adapter-rest-api-layer-mapper-patterns-02_mapper-responsibility",
+      "adapter-rest-api-layer-package-guide-01_rest_api_package_guide",
+      "adapter-rest-api-layer-testing-01_controller-unit-test",
+      "adapter-rest-api-layer-testing-02_integration-test",
+      "adapter-rest-api-layer-testing-03_rest-docs"
+    ],
+    "adapter-persistence": [
+      "persistence-layer-jpa-entity-design-01_long-fk-strategy",
+      "persistence-layer-jpa-entity-design-02_entity-immutability",
+      "persistence-layer-jpa-entity-design-03_n-plus-one-prevention",
+      "persistence-layer-package-guide-01_persistence_package_guide",
+      "persistence-layer-querydsl-optimization-01_dto-projection",
+      "persistence-layer-querydsl-optimization-02_dynamic-query",
+      "persistence-layer-querydsl-optimization-03_batch-processing",
+      "persistence-layer-repository-patterns-01_aggregate-repository",
+      "persistence-layer-repository-patterns-02_custom-repository",
+      "persistence-layer-repository-patterns-03_specification-pattern",
+      "persistence-layer-testing-01_repository-unit-testing",
+      "persistence-layer-testing-02_testcontainers-integration",
+      "persistence-layer-testing-03_test-tags-strategy"
+    ],
+    "testing": [
+      "testing-archunit-rules-01_layer-dependency-rules",
+      "testing-archunit-rules-02_naming-convention-rules",
+      "testing-archunit-rules-03_annotation-rules",
+      "testing-integration-testing-01_testcontainers-setup",
+      "testing-integration-testing-02_api-integration-tests",
+      "testing-integration-testing-03_persistence-tests",
+      "testing-integration-testing-04_test-data-management",
+      "testing-integration-testing-05_performance-and-benchmark",
+      "testing-multi-module-testing-01_module-isolation-strategy",
+      "testing-multi-module-testing-02_shared-test-fixtures",
+      "testing-multi-module-testing-03_cross-module-integration",
+      "testing-multi-module-testing-04_test-tags-and-execution"
+    ],
+    "java21": [
+      "java21-patterns-record-patterns-01_dto-with-records",
+      "java21-patterns-record-patterns-02_value-objects-with-records",
+      "java21-patterns-record-patterns-03_pattern-matching",
+      "java21-patterns-record-patterns-04_usecase-inner-record",
+      "java21-patterns-record-patterns-05_entity-vs-value-object",
+      "java21-patterns-sealed-classes-01_domain-modeling",
+      "java21-patterns-sealed-classes-02_event-modeling",
+      "java21-patterns-sealed-classes-03_result-types",
+      "java21-patterns-sealed-classes-04_aggregate-state-modeling",
+      "java21-patterns-sealed-classes-05_exception-hierarchy",
+      "java21-patterns-virtual-threads-01_virtual-threads-basics",
+      "java21-patterns-virtual-threads-02_async-processing",
+      "java21-patterns-virtual-threads-03_performance-tuning",
+      "java21-patterns-virtual-threads-04_spring-integration",
+      "java21-patterns-virtual-threads-05_outbound-port-async"
+    ],
+    "enterprise": [
+      "enterprise-patterns-caching-01_cache-strategies",
+      "enterprise-patterns-caching-02_distributed-cache",
+      "enterprise-patterns-caching-03_cache-consistency",
+      "enterprise-patterns-event-driven-01_domain-events",
+      "enterprise-patterns-event-driven-02_event-sourcing",
+      "enterprise-patterns-event-driven-03_saga-pattern",
+      "enterprise-patterns-event-driven-04_multi-module-event-design",
+      "enterprise-patterns-resilience-01_circuit-breaker",
+      "enterprise-patterns-resilience-02_retry-and-timeout",
+      "enterprise-patterns-resilience-03_bulkhead-pattern"
+    ],
+    "error-handling": [
+      "error-handling-01_error-handling-strategy",
+      "error-handling-02_domain-exception-design",
+      "error-handling-03_global-exception-handler",
+      "error-handling-04_error-response-format",
+      "error-handling-05_errorcode-management"
+    ]
+  }
+}

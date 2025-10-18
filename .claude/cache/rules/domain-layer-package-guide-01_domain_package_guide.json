@@ -1,0 +1,28 @@
+{
+  "id": "domain-layer-package-guide-01_domain_package_guide",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/package-guide/01_domain_package_guide.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "domain_package_guide"
+      ],
+      "secondary": [
+        "domain",
+        "패키지",
+        "가이드"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "critical",
+    "tokenEstimate": 362
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/package-guide/01_domain_package_guide.md",
+    "summary": "Auto-generated from 01_domain_package_guide.md"
+  }
+}

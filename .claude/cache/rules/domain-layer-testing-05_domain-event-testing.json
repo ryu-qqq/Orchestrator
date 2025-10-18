@@ -1,0 +1,33 @@
+{
+  "id": "domain-layer-testing-05_domain-event-testing",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/testing/05_domain-event-testing.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "domain",
+        "event",
+        "testing"
+      ],
+      "secondary": [
+        "domain",
+        "event",
+        "testing",
+        "도메인",
+        "이벤트",
+        "테스트"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "critical",
+    "tokenEstimate": 1147
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/testing/05_domain-event-testing.md",
+    "summary": "Auto-generated from 05_domain-event-testing.md"
+  }
+}

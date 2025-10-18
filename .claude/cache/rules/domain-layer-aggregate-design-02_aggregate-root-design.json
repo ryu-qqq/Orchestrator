@@ -1,0 +1,36 @@
+{
+  "id": "domain-layer-aggregate-design-02_aggregate-root-design",
+  "sourceFile": "/Users/sangwon-ryu/Orchestrator/docs/coding_convention/02-domain-layer/aggregate-design/02_aggregate-root-design.md",
+  "metadata": {
+    "keywords": {
+      "primary": [
+        "aggregate",
+        "root",
+        "design"
+      ],
+      "secondary": [
+        "aggregate",
+        "root",
+        "design",
+        "루트",
+        "중심",
+        "변경",
+        "타입으로",
+        "전이",
+        "제약"
+      ],
+      "anti": []
+    },
+    "layer": "domain",
+    "priority": "critical",
+    "tokenEstimate": 360
+  },
+  "rules": {
+    "prohibited": [],
+    "allowed": []
+  },
+  "documentation": {
+    "path": "docs/coding_convention/02-domain-layer/aggregate-design/02_aggregate-root-design.md",
+    "summary": "Auto-generated from 02_aggregate-root-design.md"
+  }
+}
