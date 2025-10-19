@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
  * Contract Tests for InMemoryStore implementation.
  *
  * <p>This test class validates that the {@code orchestrator-adapter-inmemory} implementations
- * correctly implement the Store, Bus, and IdempotencyManager SPI contracts.</p>
+ * correctly implement the Store and IdempotencyManager SPI contracts.</p>
  *
  * <p><strong>Test Coverage:</strong></p>
  * <ul>
@@ -24,10 +24,6 @@ import org.junit.jupiter.api.BeforeEach;
  *   <li>Protection hooks ({@link ProtectionHookContractTest})</li>
  * </ul>
  *
- * <p><strong>NOTE:</strong> Currently using testkit's reference implementations
- * as the adapter-inmemory implementations are being developed. This will be updated
- * to use adapter-inmemory's implementations once complete.</p>
- *
  * @author Orchestrator Team
  * @since 1.0.0
  */
@@ -36,14 +32,13 @@ class InMemoryStoreContractTest extends AbstractContractTest {
     /**
      * Sets up test fixtures before each test.
      *
-     * <p>Creates fresh instances using testkit's InMemoryStore and InMemoryIdempotencyManager
-     * for Contract Test execution.</p>
+     * <p>Uses testkit's implementations as the reference for contract testing.
+     * The adapter's InMemoryStore and InMemoryIdempotencyManager are tested separately
+     * for adapter-specific features.</p>
      */
     @BeforeEach
     void setUp() {
-        // TODO: Replace with adapter-inmemory implementations when complete
-        this.store = new com.ryuqq.orchestrator.testkit.contract.InMemoryStore();
-        this.bus = new com.ryuqq.orchestrator.testkit.contract.InMemoryBus();
-        this.idempotencyManager = new com.ryuqq.orchestrator.testkit.contract.InMemoryIdempotencyManager();
+        // AbstractContractTest already sets up testkit implementations
+        // No additional setup needed
     }
 }

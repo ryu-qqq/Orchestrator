@@ -388,6 +388,29 @@ public class SqsBus implements Bus {
     private final String queueUrl;
     private final String dlqUrl;
     private final ObjectMapper objectMapper;
+
+    // ⚠️ PRODUCTION WARNING: This simple ConcurrentHashMap-based cache has several issues:
+    //
+    // 1. MEMORY LEAK: If ack/nack is not called (e.g., application crash, network timeout),
+    //    items remain in cache forever, causing memory leak.
+    //
+    // 2. STATEFUL DESIGN: This makes the SqsBus instance stateful, which is problematic in
+    //    distributed environments. If instance A dequeues a message, instance B cannot ack it
+    //    because the receiptHandle is stored in instance A's local cache.
+    //
+    // For production environments, consider these alternatives:
+    // - Use TTL-based cache (Guava Cache, Caffeine, Redis) to prevent memory leaks
+    // - Store receiptHandle in Envelope metadata for stateless design
+    // - Use external state store (Redis, DynamoDB) for distributed environment
+    //
+    // Example with Guava Cache (TTL-based):
+    //   Cache<OpId, String> cache = CacheBuilder.newBuilder()
+    //       .expireAfterWrite(10, TimeUnit.MINUTES)  // Auto-cleanup after 10 min
+    //       .build();
+    //
+    // Example with stateless design:
+    //   // Store receiptHandle in Envelope's metadata field during dequeue
+    //   // Retrieve it from Envelope during ack/nack (no cache needed)
     private final Map<OpId, String> receiptHandleCache = new java.util.concurrent.ConcurrentHashMap<>();
 
     public SqsBus(SqsClient sqsClient, String queueUrl, String dlqUrl) {
@@ -521,6 +544,12 @@ public class SqsBus implements Bus {
             // 역직렬화 실패 시, 메시지를 DLQ로 보내는 등의 추가 처리 고려
             // 여기서는 로깅 후 null을 반환하여 스트림 처리가 중단되지 않도록 합니다.
             // dequeue 메소드에서는 .filter(Objects::nonNull)를 추가해야 합니다.
+
+            // BEST PRACTICE: Use structured logging framework (e.g., SLF4J) instead of System.err
+            // Example with SLF4J:
+            // private static final Logger log = LoggerFactory.getLogger(SqsBus.class);
+            // log.error("Failed to deserialize SQS message: {}", message.body(), e);
+
             System.err.println("Failed to deserialize SQS message: " + message.body());
             return null;
         }
@@ -618,7 +647,9 @@ public class Resilience4jCircuitBreaker implements CircuitBreaker {
             case CLOSED -> CircuitBreakerState.CLOSED;
             case OPEN -> CircuitBreakerState.OPEN;
             case HALF_OPEN -> CircuitBreakerState.HALF_OPEN;
-            default -> CircuitBreakerState.CLOSED;
+            case DISABLED -> CircuitBreakerState.CLOSED; // Treat DISABLED as CLOSED
+            case FORCED_OPEN -> CircuitBreakerState.OPEN; // Treat FORCED_OPEN as OPEN
+            // No default case to catch any new states added to Resilience4j at compile time
         };
     }
 
