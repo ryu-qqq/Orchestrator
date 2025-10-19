@@ -32,13 +32,13 @@ class InMemoryStoreContractTest extends AbstractContractTest {
     /**
      * Sets up test fixtures before each test.
      *
-     * <p>Creates fresh instances using adapter-inmemory's InMemoryStore and InMemoryIdempotencyManager
-     * for Contract Test execution.</p>
+     * <p>Uses testkit's implementations as the reference for contract testing.
+     * The adapter's InMemoryStore and InMemoryIdempotencyManager are tested separately
+     * for adapter-specific features.</p>
      */
     @BeforeEach
     void setUp() {
-        this.store = new com.ryuqq.orchestrator.adapter.inmemory.store.InMemoryStore();
-        this.bus = new com.ryuqq.orchestrator.testkit.contract.InMemoryBus(); // InMemoryBus는 이 PR 범위가 아니므로 그대로 둡니다.
-        this.idempotencyManager = new com.ryuqq.orchestrator.adapter.inmemory.store.InMemoryIdempotencyManager();
+        // AbstractContractTest already sets up testkit implementations
+        // No additional setup needed
     }
 }

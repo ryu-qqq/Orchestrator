@@ -6,6 +6,13 @@ dependencies {
     // Core SDK 의존
     implementation project(':orchestrator-core')
 
+    // Protection 어댑터 의존성
+    // resilience4j - CircuitBreaker 구현
+    implementation 'io.github.resilience4j:resilience4j-circuitbreaker:2.1.0'
+
+    // Guava - RateLimiter 구현
+    implementation 'com.google.guava:guava:32.1.3-jre'
+
     // TestKit 의존 (Contract Tests 실행)
     testImplementation project(':orchestrator-testkit')
 

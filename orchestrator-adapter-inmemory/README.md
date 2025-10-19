@@ -5,9 +5,9 @@
 ## Overview
 
 This module provides thread-safe, in-memory implementations of the Orchestrator SPI (Service Provider Interface) for:
-- **Store**: Operation state and write-ahead log management
-- **Bus**: Message queue with delayed delivery and DLQ support
-- **IdempotencyManager**: Idempotency key to OpId mapping
+- **Store**: Operation state and write-ahead log management ✅
+- **Bus**: Message queue with delayed delivery and DLQ support ✅ (OR-14)
+- **IdempotencyManager**: Idempotency key to OpId mapping ✅
 - **Protection**: Circuit breaker, rate limiter, and bulkhead (샘플 구현 예정)
 
 ## Purpose
@@ -32,6 +32,26 @@ This module provides thread-safe, in-memory implementations of the Orchestrator 
 - WAL state tracking (PENDING → COMPLETED)
 - scanWA() for recovery scenarios
 - scanInProgress() for timeout detection
+
+### Bus SPI Implementation (OR-14)
+
+**Data Structures:**
+- `DelayQueue<DelayedEnvelope>` - Delayed message delivery with timestamp ordering
+- `ConcurrentHashMap<OpId, EnvelopeWrapper>` - In-flight message tracking with visibility timeout
+- `CopyOnWriteArrayList<DLQEntry>` - Dead Letter Queue for permanently failed messages
+
+**Key Features:**
+- At-least-once delivery semantics
+- Delayed message delivery (retry scenarios)
+- Visibility timeout simulation (30 seconds default)
+- Dead Letter Queue (DLQ) with failure metadata
+- Thread-safe operations using concurrent collections
+
+**Performance:**
+- publish(): O(log N) - DelayQueue insertion
+- dequeue(): O(M log N) where M = batchSize
+- ack/nack(): O(1) - ConcurrentHashMap operations
+- publishToDLQ(): O(1) - CopyOnWriteArrayList append
 
 ### IdempotencyManager SPI Implementation
 
@@ -178,10 +198,16 @@ Target: ≥ 85% code coverage
 open orchestrator-adapter-inmemory/build/reports/jacoco/test/html/index.html
 ```
 
-## Future Enhancements (OR-14, OR-15)
+## Implementation Status
 
-- **InMemoryBus**: Message queue with delayed delivery and DLQ (OR-14)
-- **Sample Protection Adapters**: Circuit breaker, rate limiter, bulkhead (OR-15)
+### ✅ Completed (OR-13, OR-14)
+- **InMemoryStore**: Operation state and WAL management ✅
+- **InMemoryIdempotencyManager**: Idempotency key mapping ✅
+- **InMemoryBus**: Message queue with delayed delivery and DLQ ✅ (OR-14)
+- **Contract Tests**: All scenarios passing ✅
+
+### 🚧 Future Enhancements (OR-15+)
+- **Sample Protection Adapters**: Circuit breaker, rate limiter, bulkhead
 - **Performance Benchmarks**: 1000 TPS target validation
 - **Concurrency Tests**: 100-thread stress testing
 - **Memory Leak Tests**: 1M operations processing validation
