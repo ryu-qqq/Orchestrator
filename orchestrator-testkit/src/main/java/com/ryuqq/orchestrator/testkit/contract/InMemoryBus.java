@@ -8,6 +8,7 @@ import com.ryuqq.orchestrator.core.spi.Bus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
@@ -52,7 +53,7 @@ public class InMemoryBus implements Bus {
     public InMemoryBus(long visibilityTimeoutMs) {
         this.queue = new DelayQueue<>();
         this.inFlight = new ConcurrentHashMap<>();
-        this.dlq = new ArrayList<>();
+        this.dlq = new CopyOnWriteArrayList<>();
         this.visibilityTimeoutMs = visibilityTimeoutMs;
     }
 

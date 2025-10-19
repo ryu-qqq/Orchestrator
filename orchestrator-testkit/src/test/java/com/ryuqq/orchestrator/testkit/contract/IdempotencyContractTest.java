@@ -56,19 +56,18 @@ class IdempotencyContractTest extends AbstractContractTest {
         OpId opId1 = idempotencyManager.getOrCreate(key);
 
         // First processing
+        boolean shouldProcess = true;
         try {
-            OperationState state1 = store.getState(opId1);
-            // Skip if already completed
-            if (state1 == OperationState.COMPLETED) {
-                // Already processed
-            } else {
-                store.setState(opId1, OperationState.IN_PROGRESS);
-                externalApiCall.run(); // External API call
-                store.writeAhead(opId1, Ok.of(opId1));
-                store.finalize(opId1, OperationState.COMPLETED);
+            // If operation is already completed, no need to process.
+            if (store.getState(opId1) == OperationState.COMPLETED) {
+                shouldProcess = false;
             }
         } catch (IllegalStateException e) {
-            // Operation doesn't exist yet, process it
+            // Operation doesn't exist, so we should process it.
+            // This is expected for the first time.
+        }
+
+        if (shouldProcess) {
             store.setState(opId1, OperationState.IN_PROGRESS);
             externalApiCall.run(); // External API call
             store.writeAhead(opId1, Ok.of(opId1));
