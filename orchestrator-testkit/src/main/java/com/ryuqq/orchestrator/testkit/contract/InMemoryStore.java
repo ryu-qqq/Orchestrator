@@ -89,11 +89,9 @@ public class InMemoryStore implements Store {
         // Update operation state
         operations.put(opId, state);
 
-        // Update WAL state to COMPLETED
-        WALEntry walEntry = walEntries.get(opId);
-        if (walEntry != null) {
-            walEntries.put(opId, new WALEntry(opId, walEntry.outcome, WriteAheadState.COMPLETED, walEntry.createdAt));
-        }
+        // Update WAL state to COMPLETED (atomic update)
+        walEntries.computeIfPresent(opId, (id, entry) ->
+                new WALEntry(opId, entry.outcome, WriteAheadState.COMPLETED, entry.createdAt));
     }
 
     /**
@@ -153,11 +151,7 @@ public class InMemoryStore implements Store {
                     Long startTime = startTimes.get(entry.getKey());
                     return startTime != null && (now - startTime) > timeoutThreshold;
                 })
-                .sorted((e1, e2) -> {
-                    Long t1 = startTimes.get(e1.getKey());
-                    Long t2 = startTimes.get(e2.getKey());
-                    return Long.compare(t1 != null ? t1 : 0, t2 != null ? t2 : 0);
-                })
+                .sorted(java.util.Comparator.comparing(entry -> startTimes.get(entry.getKey())))
                 .limit(batchSize)
                 .map(entry -> entry.getKey())
                 .collect(Collectors.toList());
