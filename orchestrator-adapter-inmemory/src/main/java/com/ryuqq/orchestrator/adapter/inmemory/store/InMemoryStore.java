@@ -36,13 +36,6 @@ import java.util.stream.Collectors;
  *   <li><strong>scanInProgress:</strong> O(K log K) - K filtered entries sorted</li>
  * </ul>
  *
- * <p><strong>Transaction Simulation:</strong></p>
- * <ul>
- *   <li>ThreadLocal-based transaction context</li>
- *   <li>Commit/Rollback support</li>
- *   <li>Isolation between concurrent operations</li>
- * </ul>
- *
  * <p><strong>Idempotency Guarantee:</strong></p>
  * <ul>
  *   <li>(Domain, EventType, BizKey, IdemKey) → OpId mapping</li>
@@ -102,11 +95,6 @@ public class InMemoryStore implements Store {
     private final ConcurrentHashMap<OpId, Envelope> envelopes;
 
     /**
-     * Thread-local transaction context for simulating transactional behavior.
-     */
-    private final ThreadLocal<TransactionContext> transactionContext;
-
-    /**
      * Creates a new InMemoryStore with empty storage.
      */
     public InMemoryStore() {
@@ -114,7 +102,6 @@ public class InMemoryStore implements Store {
         this.walByOpId = new ConcurrentHashMap<>();
         this.walSortedSet = new ConcurrentSkipListSet<>(Comparator.comparingLong(entry -> entry.occurredAt));
         this.envelopes = new ConcurrentHashMap<>();
-        this.transactionContext = ThreadLocal.withInitial(TransactionContext::new);
     }
 
     /**
@@ -419,37 +406,25 @@ public class InMemoryStore implements Store {
     }
 
     /**
-     * Internal class representing an Operation entity with state and version.
+     * Internal record representing an Operation entity with state and version.
+     *
+     * @param opId the operation identifier
+     * @param state the current operation state
+     * @param version the operation version number
      */
-    private static class OperationEntity {
-        private final OpId opId;
-        private final OperationState state;
-        private final int version;
-
-        OperationEntity(OpId opId, OperationState state, int version) {
-            this.opId = opId;
-            this.state = state;
-            this.version = version;
-        }
+    private record OperationEntity(OpId opId, OperationState state, int version) {
     }
 
     /**
-     * Internal class representing a Write-Ahead Log entry.
-     * Implements equals/hashCode based on opId for proper ConcurrentSkipListSet behavior.
+     * Internal record representing a Write-Ahead Log entry.
+     * Implements custom equals/hashCode based on opId for proper ConcurrentSkipListSet behavior.
+     *
+     * @param opId the operation identifier
+     * @param outcome the outcome to be recorded
+     * @param state the write-ahead state
+     * @param occurredAt the timestamp when the event occurred
      */
-    private static class WALEntry {
-        private final OpId opId;
-        private final Outcome outcome;
-        private final WriteAheadState state;
-        private final long occurredAt;
-
-        WALEntry(OpId opId, Outcome outcome, WriteAheadState state, long occurredAt) {
-            this.opId = opId;
-            this.outcome = outcome;
-            this.state = state;
-            this.occurredAt = occurredAt;
-        }
-
+    private record WALEntry(OpId opId, Outcome outcome, WriteAheadState state, long occurredAt) {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -464,11 +439,4 @@ public class InMemoryStore implements Store {
         }
     }
 
-    /**
-     * Transaction context for simulating transactional behavior.
-     */
-    private static class TransactionContext {
-        // Transaction-related state can be added here
-        // For simple in-memory implementation, this is a placeholder
-    }
 }

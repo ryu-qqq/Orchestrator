@@ -389,15 +389,28 @@ public class SqsBus implements Bus {
     private final String dlqUrl;
     private final ObjectMapper objectMapper;
 
-    // ⚠️ PRODUCTION WARNING: This simple ConcurrentHashMap-based cache can cause memory leaks
-    // if ack/nack is not called (e.g., application crash, network timeout).
-    // For production environments, use a cache with TTL expiration policy such as:
-    // - Google Guava Cache with expireAfterWrite()
-    // - Caffeine Cache with expireAfterWrite()
-    // - Redis with TTL
-    // Example: Cache<OpId, String> cache = CacheBuilder.newBuilder()
-    //              .expireAfterWrite(10, TimeUnit.MINUTES)
-    //              .build();
+    // ⚠️ PRODUCTION WARNING: This simple ConcurrentHashMap-based cache has several issues:
+    //
+    // 1. MEMORY LEAK: If ack/nack is not called (e.g., application crash, network timeout),
+    //    items remain in cache forever, causing memory leak.
+    //
+    // 2. STATEFUL DESIGN: This makes the SqsBus instance stateful, which is problematic in
+    //    distributed environments. If instance A dequeues a message, instance B cannot ack it
+    //    because the receiptHandle is stored in instance A's local cache.
+    //
+    // For production environments, consider these alternatives:
+    // - Use TTL-based cache (Guava Cache, Caffeine, Redis) to prevent memory leaks
+    // - Store receiptHandle in Envelope metadata for stateless design
+    // - Use external state store (Redis, DynamoDB) for distributed environment
+    //
+    // Example with Guava Cache (TTL-based):
+    //   Cache<OpId, String> cache = CacheBuilder.newBuilder()
+    //       .expireAfterWrite(10, TimeUnit.MINUTES)  // Auto-cleanup after 10 min
+    //       .build();
+    //
+    // Example with stateless design:
+    //   // Store receiptHandle in Envelope's metadata field during dequeue
+    //   // Retrieve it from Envelope during ack/nack (no cache needed)
     private final Map<OpId, String> receiptHandleCache = new java.util.concurrent.ConcurrentHashMap<>();
 
     public SqsBus(SqsClient sqsClient, String queueUrl, String dlqUrl) {
@@ -634,7 +647,9 @@ public class Resilience4jCircuitBreaker implements CircuitBreaker {
             case CLOSED -> CircuitBreakerState.CLOSED;
             case OPEN -> CircuitBreakerState.OPEN;
             case HALF_OPEN -> CircuitBreakerState.HALF_OPEN;
-            default -> CircuitBreakerState.CLOSED;
+            case DISABLED -> CircuitBreakerState.CLOSED; // Treat DISABLED as CLOSED
+            case FORCED_OPEN -> CircuitBreakerState.OPEN; // Treat FORCED_OPEN as OPEN
+            // No default case to catch any new states added to Resilience4j at compile time
         };
     }
 
