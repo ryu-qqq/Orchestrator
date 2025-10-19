@@ -67,15 +67,9 @@ public abstract class AbstractContractTest {
      */
     @AfterEach
     void tearDown() {
-        if (store != null) {
-            store.clear();
-        }
-        if (bus != null) {
-            bus.clear();
-        }
-        if (idempotencyManager != null) {
-            idempotencyManager.clear();
-        }
+        store.clear();
+        bus.clear();
+        idempotencyManager.clear();
     }
 
     /**
