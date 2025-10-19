@@ -7,23 +7,33 @@ import com.ryuqq.orchestrator.core.spi.Store;
 import com.ryuqq.orchestrator.core.spi.WriteAheadState;
 import com.ryuqq.orchestrator.core.statemachine.OperationState;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
 /**
  * In-memory implementation of {@link Store} SPI for testing and reference purposes.
  *
  * <p>This implementation provides thread-safe persistent storage operations
- * using {@link ConcurrentHashMap} for key-value storage and {@link CopyOnWriteArrayList}
- * for write-ahead log entries with guaranteed ordering.</p>
+ * using {@link ConcurrentHashMap} for O(1) key-value operations and {@link ConcurrentSkipListSet}
+ * for ordered write-ahead log entries with efficient sorted scans.</p>
  *
  * <p><strong>Data Structures:</strong></p>
  * <ul>
- *   <li><strong>operations:</strong> ConcurrentHashMap&lt;OpId, OperationEntity&gt; - Operation state, version, result payload</li>
- *   <li><strong>writeAheadLog:</strong> CopyOnWriteArrayList&lt;WALEntry&gt; - Ordered WAL entries (occurred_at based)</li>
- *   <li><strong>envelopes:</strong> ConcurrentHashMap&lt;OpId, Envelope&gt; - Original command envelopes</li>
+ *   <li><strong>operations:</strong> ConcurrentHashMap&lt;OpId, OperationEntity&gt; - Operation state, version, result payload (O(1) access)</li>
+ *   <li><strong>walByOpId:</strong> ConcurrentHashMap&lt;OpId, WALEntry&gt; - Fast WAL entry lookup by OpId (O(1) access)</li>
+ *   <li><strong>walSortedSet:</strong> ConcurrentSkipListSet&lt;WALEntry&gt; - Sorted WAL entries by occurredAt (O(log N) insertion, ordered iteration)</li>
+ *   <li><strong>envelopes:</strong> ConcurrentHashMap&lt;OpId, Envelope&gt; - Original command envelopes (O(1) access)</li>
+ * </ul>
+ *
+ * <p><strong>Performance Characteristics:</strong></p>
+ * <ul>
+ *   <li><strong>writeAhead:</strong> O(log N) - ConcurrentSkipListSet insertion</li>
+ *   <li><strong>finalize:</strong> O(log N) - ConcurrentSkipListSet update</li>
+ *   <li><strong>scanWA:</strong> O(M) - Ordered iteration over M entries</li>
+ *   <li><strong>scanInProgress:</strong> O(K log K) - K filtered entries sorted</li>
  * </ul>
  *
  * <p><strong>Transaction Simulation:</strong></p>
@@ -49,17 +59,17 @@ import java.util.stream.Collectors;
  * <p><strong>Usage Example:</strong></p>
  * <pre>
  * Store store = new InMemoryStore();
+ * OpId opId = ...;
+ * Outcome outcome = ...;
  *
- * // Start transaction
- * store.beginTransaction();
- * try {
- *     store.writeAhead(opId, outcome);
- *     store.finalize(opId, OperationState.COMPLETED);
- *     store.commitTransaction();
- * } catch (Exception e) {
- *     store.rollbackTransaction();
- *     throw e;
- * }
+ * // 1. Write-Ahead Log에 기록
+ * store.writeAhead(opId, outcome);
+ *
+ * // 2. 작업 상태를 최종 상태로 변경
+ * store.finalize(opId, OperationState.COMPLETED);
+ *
+ * // 3. WAL 스캔 (PENDING 상태 작업 조회)
+ * List&lt;OpId&gt; pendingOps = store.scanWA(WriteAheadState.PENDING, 10);
  * </pre>
  *
  * @author Orchestrator Team
@@ -74,10 +84,16 @@ public class InMemoryStore implements Store {
     private final ConcurrentHashMap<OpId, OperationEntity> operations;
 
     /**
-     * Write-Ahead Log entries storage with guaranteed ordering.
-     * Entries are ordered by occurred_at timestamp.
+     * Write-Ahead Log entries indexed by OpId for O(1) lookup.
+     * Key: OpId, Value: WALEntry
      */
-    private final CopyOnWriteArrayList<WALEntry> writeAheadLog;
+    private final ConcurrentHashMap<OpId, WALEntry> walByOpId;
+
+    /**
+     * Write-Ahead Log entries sorted by occurred_at timestamp for efficient ordered scans.
+     * Automatically maintains sorted order using ConcurrentSkipListSet.
+     */
+    private final ConcurrentSkipListSet<WALEntry> walSortedSet;
 
     /**
      * Original command envelopes for retry and recovery.
@@ -95,7 +111,8 @@ public class InMemoryStore implements Store {
      */
     public InMemoryStore() {
         this.operations = new ConcurrentHashMap<>();
-        this.writeAheadLog = new CopyOnWriteArrayList<>();
+        this.walByOpId = new ConcurrentHashMap<>();
+        this.walSortedSet = new ConcurrentSkipListSet<>(Comparator.comparingLong(entry -> entry.occurredAt));
         this.envelopes = new ConcurrentHashMap<>();
         this.transactionContext = ThreadLocal.withInitial(TransactionContext::new);
     }
@@ -108,6 +125,7 @@ public class InMemoryStore implements Store {
      *   <li>Creates WAL entry with PENDING state</li>
      *   <li>Uses occurred_at for ordering</li>
      *   <li>Idempotent: updates existing entry if present</li>
+     *   <li>Performance: O(log N) using ConcurrentSkipListSet</li>
      * </ul>
      */
     @Override
@@ -122,12 +140,14 @@ public class InMemoryStore implements Store {
         long occurredAt = System.currentTimeMillis();
         WALEntry newEntry = new WALEntry(opId, outcome, WriteAheadState.PENDING, occurredAt);
 
-        // Idempotent: remove old entry if exists, add new entry
-        writeAheadLog.removeIf(entry -> entry.opId.equals(opId));
-        writeAheadLog.add(newEntry);
+        // Idempotent: remove old entry if exists
+        WALEntry oldEntry = walByOpId.put(opId, newEntry);
+        if (oldEntry != null) {
+            walSortedSet.remove(oldEntry);
+        }
 
-        // Sort by occurred_at to maintain order
-        writeAheadLog.sort((e1, e2) -> Long.compare(e1.occurredAt, e2.occurredAt));
+        // Add new entry to sorted set (automatically maintains order)
+        walSortedSet.add(newEntry);
     }
 
     /**
@@ -138,6 +158,7 @@ public class InMemoryStore implements Store {
      *   <li>Updates operation state to terminal state</li>
      *   <li>Marks WAL entry as COMPLETED</li>
      *   <li>Atomic update using ConcurrentHashMap operations</li>
+     *   <li>Performance: O(log N) for WAL update using ConcurrentSkipListSet</li>
      * </ul>
      */
     @Override
@@ -156,8 +177,8 @@ public class InMemoryStore implements Store {
         OperationEntity entity = operations.get(opId);
         if (entity == null) {
             // Check if WAL entry exists
-            boolean walExists = writeAheadLog.stream().anyMatch(e -> e.opId.equals(opId));
-            if (!walExists) {
+            WALEntry walEntry = walByOpId.get(opId);
+            if (walEntry == null) {
                 throw new IllegalStateException("Operation not found for opId: " + opId);
             }
         }
@@ -175,13 +196,13 @@ public class InMemoryStore implements Store {
         }
         operations.put(opId, entity);
 
-        // Update WAL state to COMPLETED
-        for (int i = 0; i < writeAheadLog.size(); i++) {
-            WALEntry entry = writeAheadLog.get(i);
-            if (entry.opId.equals(opId)) {
-                writeAheadLog.set(i, new WALEntry(opId, entry.outcome, WriteAheadState.COMPLETED, entry.occurredAt));
-                break;
-            }
+        // Update WAL state to COMPLETED (O(log N) remove + insert)
+        WALEntry oldEntry = walByOpId.get(opId);
+        if (oldEntry != null) {
+            WALEntry updatedEntry = new WALEntry(opId, oldEntry.outcome, WriteAheadState.COMPLETED, oldEntry.occurredAt);
+            walByOpId.put(opId, updatedEntry);
+            walSortedSet.remove(oldEntry);
+            walSortedSet.add(updatedEntry);
         }
     }
 
@@ -191,8 +212,9 @@ public class InMemoryStore implements Store {
      * <p><strong>Implementation Notes:</strong></p>
      * <ul>
      *   <li>Filters WAL entries by state</li>
-     *   <li>Orders by occurred_at (oldest first)</li>
+     *   <li>Orders by occurred_at (oldest first) - ConcurrentSkipListSet maintains order</li>
      *   <li>Limits result to batchSize</li>
+     *   <li>Performance: O(M) where M is number of matching entries</li>
      * </ul>
      */
     @Override
@@ -204,9 +226,9 @@ public class InMemoryStore implements Store {
             throw new IllegalArgumentException("batchSize must be positive, but was: " + batchSize);
         }
 
-        return writeAheadLog.stream()
+        // ConcurrentSkipListSet already maintains sorted order by occurredAt
+        return walSortedSet.stream()
                 .filter(entry -> entry.state == state)
-                .sorted((e1, e2) -> Long.compare(e1.occurredAt, e2.occurredAt))
                 .limit(batchSize)
                 .map(entry -> entry.opId)
                 .collect(Collectors.toList());
@@ -219,6 +241,7 @@ public class InMemoryStore implements Store {
      * <ul>
      *   <li>Retrieves outcome from WAL entry</li>
      *   <li>Throws exception if WAL entry not found</li>
+     *   <li>Performance: O(1) lookup using ConcurrentHashMap</li>
      * </ul>
      */
     @Override
@@ -227,11 +250,12 @@ public class InMemoryStore implements Store {
             throw new IllegalArgumentException("opId cannot be null");
         }
 
-        return writeAheadLog.stream()
-                .filter(entry -> entry.opId.equals(opId))
-                .map(entry -> entry.outcome)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No WAL entry found for opId: " + opId));
+        WALEntry entry = walByOpId.get(opId);
+        if (entry == null) {
+            throw new IllegalStateException("No WAL entry found for opId: " + opId);
+        }
+
+        return entry.outcome;
     }
 
     /**
@@ -242,6 +266,7 @@ public class InMemoryStore implements Store {
      *   <li>Filters operations in IN_PROGRESS state</li>
      *   <li>Checks if startedAt exceeds timeout threshold</li>
      *   <li>Orders by startedAt (oldest first)</li>
+     *   <li>Performance: Optimized to avoid repeated map lookups during sorting</li>
      * </ul>
      */
     @Override
@@ -255,20 +280,32 @@ public class InMemoryStore implements Store {
 
         long now = System.currentTimeMillis();
 
+        // Map to temporary object to avoid repeated envelope lookups during sorting
         return operations.entrySet().stream()
                 .filter(entry -> entry.getValue().state == OperationState.IN_PROGRESS)
-                .filter(entry -> {
-                    Envelope envelope = envelopes.get(entry.getKey());
-                    return envelope != null && (now - envelope.acceptedAt()) > timeoutThreshold;
+                .map(entry -> {
+                    OpId opId = entry.getKey();
+                    Envelope envelope = envelopes.get(opId);
+                    return new OperationWithTimestamp(opId, envelope);
                 })
-                .sorted((e1, e2) -> {
-                    Envelope env1 = envelopes.get(e1.getKey());
-                    Envelope env2 = envelopes.get(e2.getKey());
-                    return Long.compare(env1.acceptedAt(), env2.acceptedAt());
-                })
+                .filter(owt -> owt.envelope != null && (now - owt.envelope.acceptedAt()) > timeoutThreshold)
+                .sorted(Comparator.comparingLong(owt -> owt.envelope.acceptedAt()))
                 .limit(batchSize)
-                .map(entry -> entry.getKey())
+                .map(owt -> owt.opId)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Temporary holder for operation ID and envelope to optimize sorting performance.
+     */
+    private static class OperationWithTimestamp {
+        private final OpId opId;
+        private final Envelope envelope;
+
+        OperationWithTimestamp(OpId opId, Envelope envelope) {
+            this.opId = opId;
+            this.envelope = envelope;
+        }
     }
 
     /**
@@ -363,7 +400,8 @@ public class InMemoryStore implements Store {
      */
     public void clear() {
         operations.clear();
-        writeAheadLog.clear();
+        walByOpId.clear();
+        walSortedSet.clear();
         envelopes.clear();
     }
 
@@ -376,11 +414,8 @@ public class InMemoryStore implements Store {
      * @return the WAL state, or null if no WAL entry exists
      */
     public WriteAheadState getWALState(OpId opId) {
-        return writeAheadLog.stream()
-                .filter(entry -> entry.opId.equals(opId))
-                .map(entry -> entry.state)
-                .findFirst()
-                .orElse(null);
+        WALEntry entry = walByOpId.get(opId);
+        return entry != null ? entry.state : null;
     }
 
     /**
@@ -400,6 +435,7 @@ public class InMemoryStore implements Store {
 
     /**
      * Internal class representing a Write-Ahead Log entry.
+     * Implements equals/hashCode based on opId for proper ConcurrentSkipListSet behavior.
      */
     private static class WALEntry {
         private final OpId opId;
@@ -412,6 +448,19 @@ public class InMemoryStore implements Store {
             this.outcome = outcome;
             this.state = state;
             this.occurredAt = occurredAt;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            WALEntry walEntry = (WALEntry) o;
+            return opId.equals(walEntry.opId);
+        }
+
+        @Override
+        public int hashCode() {
+            return opId.hashCode();
         }
     }
 
