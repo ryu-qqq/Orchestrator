@@ -51,7 +51,7 @@ CREATE INDEX idx_operations_idem_key ON operations(idempotency_key);
 -- Write-Ahead Log 테이블
 CREATE TABLE write_ahead_log (
     id BIGSERIAL PRIMARY KEY,
-    op_id UUID NOT NULL REFERENCES operations(id),
+    op_id UUID NOT NULL UNIQUE REFERENCES operations(id),
     outcome_type VARCHAR(20) NOT NULL CHECK (outcome_type IN ('OK', 'RETRY', 'FAIL')),
     provider_txn_id VARCHAR(255),
     result_payload JSONB,
@@ -185,6 +185,9 @@ public class JpaStore implements Store {
         }
 
         // 멱등성: 기존 WAL이 있으면 업데이트, 없으면 INSERT
+        // Note: 이 로직은 find와 save 사이에 race condition이 발생할 수 있습니다.
+        // 프로덕션 코드에서는 DB의 UPSERT 기능을 사용하거나 DataIntegrityViolationException을
+        // 처리하여 원자성을 보장하는 것이 좋습니다.
         WriteAheadLogEntity existing = walRepo.findByOpId(opId.value());
         if (existing != null) {
             existing.setOutcomeType(wal.getOutcomeType());
@@ -194,7 +197,23 @@ public class JpaStore implements Store {
             existing.setErrorMessage(wal.getErrorMessage());
             walRepo.save(existing);
         } else {
-            walRepo.save(wal);
+            try {
+                walRepo.save(wal);
+            } catch (org.springframework.dao.DataIntegrityViolationException e) {
+                // 동시성 환경에서 다른 스레드가 이미 삽입한 경우
+                // 재조회 후 업데이트 시도
+                existing = walRepo.findByOpId(opId.value());
+                if (existing != null) {
+                    existing.setOutcomeType(wal.getOutcomeType());
+                    existing.setProviderTxnId(wal.getProviderTxnId());
+                    existing.setResultPayload(wal.getResultPayload());
+                    existing.setErrorCode(wal.getErrorCode());
+                    existing.setErrorMessage(wal.getErrorMessage());
+                    walRepo.save(existing);
+                } else {
+                    throw e; // 예상치 못한 경우, 재발생
+                }
+            }
         }
     }
 }
@@ -369,6 +388,7 @@ public class SqsBus implements Bus {
     private final String queueUrl;
     private final String dlqUrl;
     private final ObjectMapper objectMapper;
+    private final Map<OpId, String> receiptHandleCache = new java.util.concurrent.ConcurrentHashMap<>();
 
     public SqsBus(SqsClient sqsClient, String queueUrl, String dlqUrl) {
         this.sqsClient = sqsClient;
@@ -426,6 +446,7 @@ public class SqsBus implements Bus {
 
         return response.messages().stream()
             .map(this::deserializeEnvelope)
+            .filter(java.util.Objects::nonNull) // 역직렬화 실패 메시지 제외
             .collect(Collectors.toList());
     }
 
@@ -492,16 +513,27 @@ public class SqsBus implements Bus {
 
     private Envelope deserializeEnvelope(Message message) {
         try {
-            return objectMapper.readValue(message.body(), Envelope.class);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to deserialize envelope", e);
+            Envelope envelope = objectMapper.readValue(message.body(), Envelope.class);
+            // OpId와 receiptHandle을 매핑하여 캐시에 저장
+            receiptHandleCache.put(envelope.opId(), message.receiptHandle());
+            return envelope;
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            // 역직렬화 실패 시, 메시지를 DLQ로 보내는 등의 추가 처리 고려
+            // 여기서는 로깅 후 null을 반환하여 스트림 처리가 중단되지 않도록 합니다.
+            // dequeue 메소드에서는 .filter(Objects::nonNull)를 추가해야 합니다.
+            System.err.println("Failed to deserialize SQS message: " + message.body());
+            return null;
         }
     }
 
     private String getReceiptHandle(Envelope envelope) {
-        // 실제 구현에서는 Envelope에 receipt handle을 metadata로 저장하거나
-        // 별도 캐시에서 OpId → Receipt Handle 매핑 필요
-        throw new UnsupportedOperationException("Receipt handle mapping not implemented");
+        // 캐시에서 receiptHandle을 조회하고 사용 후 제거
+        String receiptHandle = receiptHandleCache.remove(envelope.opId());
+        if (receiptHandle == null) {
+            throw new IllegalStateException("Receipt handle not found for OpId: " + envelope.opId() +
+                ". It might have been already processed or expired.");
+        }
+        return receiptHandle;
     }
 }
 ```
@@ -533,18 +565,18 @@ dependencies {
 ```java
 package com.example.adapter.protection;
 
+import com.ryuqq.orchestrator.core.model.OpId;
 import com.ryuqq.orchestrator.core.protection.CircuitBreaker;
+import com.ryuqq.orchestrator.core.protection.CircuitBreakerState;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 
 import java.time.Duration;
-import java.util.concurrent.Callable;
 
 public class Resilience4jCircuitBreaker implements CircuitBreaker {
 
-    private final CircuitBreakerRegistry registry;
+    private final io.github.resilience4j.circuitbreaker.CircuitBreaker circuitBreaker;
 
-    public Resilience4jCircuitBreaker() {
+    public Resilience4jCircuitBreaker(String name) {
         CircuitBreakerConfig config = CircuitBreakerConfig.custom()
             .failureRateThreshold(50)                     // 실패율 50% 이상
             .slowCallRateThreshold(50)                     // 느린 호출 50% 이상
@@ -555,28 +587,44 @@ public class Resilience4jCircuitBreaker implements CircuitBreaker {
             .permittedNumberOfCallsInHalfOpenState(5)      // HALF_OPEN 시 5개 테스트
             .build();
 
-        this.registry = CircuitBreakerRegistry.of(config);
+        this.circuitBreaker = io.github.resilience4j.circuitbreaker.CircuitBreaker.of(name, config);
     }
 
     @Override
-    public <T> T call(String resourceKey, Callable<T> supplier) throws Exception {
-        io.github.resilience4j.circuitbreaker.CircuitBreaker cb =
-            registry.circuitBreaker(resourceKey);
-
-        return cb.executeCallable(supplier);
+    public boolean tryAcquire(OpId opId) {
+        return circuitBreaker.tryAcquirePermission();
     }
 
     @Override
-    public State state(String resourceKey) {
-        io.github.resilience4j.circuitbreaker.CircuitBreaker cb =
-            registry.circuitBreaker(resourceKey);
+    public void recordSuccess(OpId opId) {
+        circuitBreaker.onSuccess(
+            System.nanoTime(),
+            java.util.concurrent.TimeUnit.NANOSECONDS
+        );
+    }
 
-        return switch (cb.getState()) {
-            case CLOSED -> State.CLOSED;
-            case OPEN -> State.OPEN;
-            case HALF_OPEN -> State.HALF_OPEN;
-            default -> State.CLOSED;
+    @Override
+    public void recordFailure(OpId opId, Throwable throwable) {
+        circuitBreaker.onError(
+            System.nanoTime(),
+            java.util.concurrent.TimeUnit.NANOSECONDS,
+            throwable
+        );
+    }
+
+    @Override
+    public CircuitBreakerState getState() {
+        return switch (circuitBreaker.getState()) {
+            case CLOSED -> CircuitBreakerState.CLOSED;
+            case OPEN -> CircuitBreakerState.OPEN;
+            case HALF_OPEN -> CircuitBreakerState.HALF_OPEN;
+            default -> CircuitBreakerState.CLOSED;
         };
+    }
+
+    @Override
+    public void reset() {
+        circuitBreaker.reset();
     }
 }
 ```
@@ -611,7 +659,7 @@ public class Resilience4jRateLimiter implements RateLimiter {
         io.github.resilience4j.ratelimiter.RateLimiter limiter =
             registry.rateLimiter(resourceKey);
 
-        return limiter.acquirePermission();
+        return limiter.tryAcquirePermission(1, maxWait);
     }
 }
 ```
@@ -623,8 +671,8 @@ public class Resilience4jRateLimiter implements RateLimiter {
 이제 실제 인프라로 Orchestrator SDK를 통합할 수 있습니다!
 
 **다음 단계**:
-- [정책 설정 가이드](./03-policy-configuration.md): Retry, Idempotency, Transition 정책 설정
-- [운영 가이드](./04-operations.md): 관측성, 알람, 백프레셔 설정
+- 정책 설정 가이드 (작성 예정): Retry, Idempotency, Transition 정책 설정
+- 운영 가이드 (작성 예정): 관측성, 알람, 백프레셔 설정
 
 **체크리스트**:
 - [ ] Store 구현 완료 (writeAhead, finalize, scanWA, scanInProgress)
