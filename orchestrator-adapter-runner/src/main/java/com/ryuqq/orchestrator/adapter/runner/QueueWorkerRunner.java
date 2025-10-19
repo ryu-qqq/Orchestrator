@@ -19,7 +19,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Queue Worker Runner 구현체.
@@ -121,14 +120,9 @@ public final class QueueWorkerRunner implements Runtime {
         this.backoffCalculator = backoffCalculator;
 
         // Named ThreadFactory for better observability
-        ThreadFactory threadFactory = new ThreadFactory() {
-            private final AtomicInteger threadNumber = new AtomicInteger(1);
-
-            @Override
-            public Thread newThread(Runnable r) {
-                return new Thread(r, "queue-worker-" + threadNumber.getAndIncrement());
-            }
-        };
+        ThreadFactory threadFactory = Thread.ofPlatform()
+                .name("queue-worker-", 1)
+                .factory();
 
         this.workerExecutor = Executors.newFixedThreadPool(config.concurrency(), threadFactory);
     }
