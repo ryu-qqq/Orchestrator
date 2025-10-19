@@ -141,7 +141,7 @@ class AtomicityContractTest extends AbstractContractTest {
     }
 
     @Test
-    void testFinalizeWithoutWriteAhead_ThrowsException() {
+    void testFinalizeWithoutWriteAhead_Succeeds() {
         // Given
         Envelope envelope = createTestEnvelope("BIZ-006", "IDEM-006");
         OpId opId = envelope.opId();
