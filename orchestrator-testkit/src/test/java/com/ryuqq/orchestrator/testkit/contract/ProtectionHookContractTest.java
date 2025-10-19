@@ -454,9 +454,15 @@ class ProtectionHookContractTest extends AbstractContractTest {
 
         @Override
         public void recordFailure(OpId opId, Throwable error) {
-            failureCount++;
-            if (failureCount >= FAILURE_THRESHOLD) {
+            if (state == CircuitBreakerState.HALF_OPEN) {
                 state = CircuitBreakerState.OPEN;
+                return;
+            }
+            if (state == CircuitBreakerState.CLOSED) {
+                failureCount++;
+                if (failureCount >= FAILURE_THRESHOLD) {
+                    state = CircuitBreakerState.OPEN;
+                }
             }
         }
 
@@ -501,11 +507,15 @@ class ProtectionHookContractTest extends AbstractContractTest {
 
         @Override
         public boolean tryAcquire(OpId opId) {
-            if (currentConcurrency.incrementAndGet() > maxConcurrent) {
-                currentConcurrency.decrementAndGet();
-                return false;
+            for (;;) {
+                int current = currentConcurrency.get();
+                if (current >= maxConcurrent) {
+                    return false;
+                }
+                if (currentConcurrency.compareAndSet(current, current + 1)) {
+                    return true;
+                }
             }
-            return true;
         }
 
         @Override
@@ -542,11 +552,15 @@ class ProtectionHookContractTest extends AbstractContractTest {
 
         @Override
         public boolean tryAcquire(OpId opId) {
-            if (permitsUsed.incrementAndGet() > permitsPerSecond) {
-                permitsUsed.decrementAndGet();
-                return false;
+            for (;;) {
+                int current = permitsUsed.get();
+                if (current >= permitsPerSecond) {
+                    return false;
+                }
+                if (permitsUsed.compareAndSet(current, current + 1)) {
+                    return true;
+                }
             }
-            return true;
         }
 
         @Override
