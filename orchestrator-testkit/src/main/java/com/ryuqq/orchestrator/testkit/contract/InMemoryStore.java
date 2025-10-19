@@ -213,6 +213,7 @@ public class InMemoryStore implements Store {
      *
      * @param opId the operation ID
      * @param state the state to set
+     * @throws IllegalStateException if attempting backward transition from terminal state
      */
     public void setState(OpId opId, OperationState state) {
         if (opId == null) {
@@ -220,6 +221,18 @@ public class InMemoryStore implements Store {
         }
         if (state == null) {
             throw new IllegalArgumentException("state cannot be null");
+        }
+
+        // Check for backward transition prohibition
+        OperationState currentState = operations.get(opId);
+        if (currentState != null) {
+            if (currentState == OperationState.COMPLETED || currentState == OperationState.FAILED) {
+                if (state == OperationState.IN_PROGRESS) {
+                    throw new IllegalStateException(
+                            String.format("Cannot transition from terminal state %s to %s for opId: %s",
+                                    currentState, state, opId));
+                }
+            }
         }
 
         operations.put(opId, state);
