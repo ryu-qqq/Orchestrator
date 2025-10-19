@@ -1,0 +1,23 @@
+// orchestrator-adapter-inmemory: 레퍼런스 어댑터 구현 (선택적)
+
+description = 'Orchestrator Adapter InMemory - Reference implementation for adapters'
+
+dependencies {
+    // Core SDK 의존
+    implementation project(':orchestrator-core')
+
+    // TestKit 의존 (Contract Tests 실행)
+    testImplementation project(':orchestrator-testkit')
+
+    // JUnit 5
+    testImplementation platform('org.junit:junit-bom:5.10.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+
+    // Test runtime
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
