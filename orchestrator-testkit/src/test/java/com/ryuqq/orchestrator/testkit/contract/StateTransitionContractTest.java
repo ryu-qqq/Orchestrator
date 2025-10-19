@@ -143,12 +143,9 @@ class StateTransitionContractTest extends AbstractContractTest {
         assertEquals(OperationState.COMPLETED, stateBefore);
 
         // When: attempt invalid transition
-        try {
-            store.setState(opId, OperationState.IN_PROGRESS);
-            fail("Should have thrown IllegalStateException");
-        } catch (IllegalStateException e) {
-            // Expected
-        }
+        assertThrows(IllegalStateException.class,
+                () -> store.setState(opId, OperationState.IN_PROGRESS),
+                "Should have thrown IllegalStateException");
 
         // Then: state is unchanged (no partial update)
         OperationState stateAfter = store.getState(opId);

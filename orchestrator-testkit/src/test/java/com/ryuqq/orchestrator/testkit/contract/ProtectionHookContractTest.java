@@ -249,8 +249,8 @@ class ProtectionHookContractTest extends AbstractContractTest {
                     } else {
                         rejectedCount.incrementAndGet();
                     }
-                } catch (Exception e) {
-                    // Ignore
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 } finally {
                     doneLatch.countDown();
                 }
@@ -369,6 +369,23 @@ class ProtectionHookContractTest extends AbstractContractTest {
     // HOOK EXECUTION ORDER TESTS
     // ===================================================================
 
+    /**
+     * NOTE: This test currently documents the expected hook execution order
+     * but does not verify actual hook implementation order.
+     *
+     * TODO: Enhance test to verify actual hook chain execution by:
+     * - Using Mock objects (e.g., Mockito's InOrder) to verify call sequence
+     * - Adding execution tracking to Testable* implementations
+     * - Recording actual hook invocations rather than simulating with strings
+     *
+     * The expected order as per package-info.java:
+     * 1. TimeoutPolicy
+     * 2. CircuitBreaker
+     * 3. Bulkhead
+     * 4. RateLimiter
+     * 5. HedgePolicy
+     * 6. Executor
+     */
     @Test
     void testHookOrder_CorrectChaining() {
         // Given: track execution order
@@ -437,9 +454,15 @@ class ProtectionHookContractTest extends AbstractContractTest {
 
         @Override
         public void recordFailure(OpId opId, Throwable error) {
-            failureCount++;
-            if (failureCount >= FAILURE_THRESHOLD) {
+            if (state == CircuitBreakerState.HALF_OPEN) {
                 state = CircuitBreakerState.OPEN;
+                return;
+            }
+            if (state == CircuitBreakerState.CLOSED) {
+                failureCount++;
+                if (failureCount >= FAILURE_THRESHOLD) {
+                    state = CircuitBreakerState.OPEN;
+                }
             }
         }
 
@@ -484,7 +507,15 @@ class ProtectionHookContractTest extends AbstractContractTest {
 
         @Override
         public boolean tryAcquire(OpId opId) {
-            return currentConcurrency.incrementAndGet() <= maxConcurrent;
+            for (;;) {
+                int current = currentConcurrency.get();
+                if (current >= maxConcurrent) {
+                    return false;
+                }
+                if (currentConcurrency.compareAndSet(current, current + 1)) {
+                    return true;
+                }
+            }
         }
 
         @Override
@@ -521,12 +552,30 @@ class ProtectionHookContractTest extends AbstractContractTest {
 
         @Override
         public boolean tryAcquire(OpId opId) {
-            return permitsUsed.incrementAndGet() <= permitsPerSecond;
+            for (;;) {
+                int current = permitsUsed.get();
+                if (current >= permitsPerSecond) {
+                    return false;
+                }
+                if (permitsUsed.compareAndSet(current, current + 1)) {
+                    return true;
+                }
+            }
         }
 
         @Override
         public boolean tryAcquire(OpId opId, long timeoutMs) throws InterruptedException {
-            return true; // Simplified: always succeeds after wait
+            long deadline = System.currentTimeMillis() + timeoutMs;
+
+            while (System.currentTimeMillis() < deadline) {
+                if (tryAcquire(opId)) {
+                    return true;
+                }
+                Thread.sleep(Math.min(50, timeoutMs / 10)); // Backoff strategy
+            }
+
+            // Final attempt
+            return tryAcquire(opId);
         }
 
         @Override

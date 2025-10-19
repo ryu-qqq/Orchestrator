@@ -71,13 +71,23 @@ orchestrator/
 ./gradlew jacocoTestReport
 ```
 
+## 📖 문서 및 가이드
+
+### 시작하기
+- **[Quick Start 가이드](./docs/guides/01-quick-start.md)**: 30분 내에 첫 Operation 실행 (Hello World 예제)
+- **[어댑터 구현 가이드](./docs/guides/02-adapter-implementation.md)**: Store, Bus, Protection 어댑터 구현 방법
+
+### 설계 문서
+- **[Orchestrator 설계 문서](./Orchestrator_guide.md)**: 전체 아키텍처 및 설계 철학
+- **[PRD 문서](./docs/prd/)**: Epic별 상세 요구사항 문서
+
 ## Jira 프로젝트
 
 - **프로젝트 키**: OR
 - **에픽**:
   - OR-1: Core API 및 계약 구현
   - OR-6: 테스트킷 (Contract Tests) 구현
-  - OR-9: 문서 및 개발자 가이드
+  - OR-9: 문서 및 개발자 가이드 ✅
   - OR-12: 레퍼런스 어댑터 구현
 
 ## 라이센스

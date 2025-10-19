@@ -10,6 +10,9 @@ import com.ryuqq.orchestrator.core.statemachine.OperationState;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -229,8 +232,10 @@ class RecoveryContractTest extends AbstractContractTest {
         AtomicInteger recoveredCount = new AtomicInteger(0);
         AtomicBoolean hasError = new AtomicBoolean(false);
 
-        // When: simulate concurrent finalizers
-        Thread finalizer1 = new Thread(() -> {
+        // When: simulate concurrent finalizers using ExecutorService
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+        executorService.submit(() -> {
             try {
                 List<OpId> pending = store.scanWA(WriteAheadState.PENDING, 100);
                 for (OpId opId : pending) {
@@ -249,7 +254,7 @@ class RecoveryContractTest extends AbstractContractTest {
             }
         });
 
-        Thread finalizer2 = new Thread(() -> {
+        executorService.submit(() -> {
             try {
                 List<OpId> pending = store.scanWA(WriteAheadState.PENDING, 100);
                 for (OpId opId : pending) {
@@ -268,15 +273,13 @@ class RecoveryContractTest extends AbstractContractTest {
             }
         });
 
-        finalizer1.start();
-        finalizer2.start();
-        finalizer1.join();
-        finalizer2.join();
+        executorService.shutdown();
+        executorService.awaitTermination(10, TimeUnit.SECONDS);
 
-        // Then: all operations recovered (some may be duplicates, but at least all processed)
+        // Then: all operations recovered exactly once (concurrent finalizers compete)
         assertFalse(hasError.get(), "No unexpected errors should occur");
-        assertTrue(recoveredCount.get() >= operationCount,
-                "At least all operations should be processed");
+        assertEquals(operationCount, recoveredCount.get(),
+                "All operations should be processed exactly once");
 
         // Verify all operations are finalized
         List<OpId> remainingPending = store.scanWA(WriteAheadState.PENDING, 100);
