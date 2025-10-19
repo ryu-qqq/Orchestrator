@@ -19,9 +19,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -77,10 +80,13 @@ class QueueWorkerRunnerTest {
     /**
      * pump() 호출 후 비동기 작업 완료를 대기하는 헬퍼 메서드.
      * ThreadPool을 사용하므로 작업 완료를 기다려야 함.
+     * CountDownLatch를 사용하여 ack/nack 호출을 명시적으로 대기합니다.
      */
-    private void pumpAndWait() throws InterruptedException {
+    private void pumpAndWait(CountDownLatch latch) throws InterruptedException {
         runner.pump();
-        Thread.sleep(200); // 비동기 작업 완료 대기 (배치 처리 고려)
+        if (!latch.await(5, TimeUnit.SECONDS)) {
+            fail("비동기 작업이 5초 내에 완료되지 않았습니다.");
+        }
     }
 
     // ============================================================
@@ -90,6 +96,7 @@ class QueueWorkerRunnerTest {
     @Test
     void pump_Ok_처리_시_writeAhead_후_finalize_순서로_호출됨() throws InterruptedException {
         // given
+        final CountDownLatch latch = new CountDownLatch(1);
         when(bus.dequeue(anyInt())).thenReturn(List.of(testEnvelope));
 
         // Executor가 즉시 COMPLETED 상태로 반환
@@ -99,8 +106,14 @@ class QueueWorkerRunnerTest {
             return null;
         }).when(executor).execute(testEnvelope);
 
+        // ack 호출 시 latch 카운트 다운
+        doAnswer(invocation -> {
+            latch.countDown();
+            return null;
+        }).when(bus).ack(any(Envelope.class));
+
         // when
-        pumpAndWait();
+        pumpAndWait(latch);
 
         // then
         InOrder inOrder = inOrder(store, bus);
@@ -112,6 +125,7 @@ class QueueWorkerRunnerTest {
     @Test
     void pump_Ok_처리_시_finalize_실패해도_ACK_처리됨() throws InterruptedException {
         // given
+        final CountDownLatch latch = new CountDownLatch(1);
         when(bus.dequeue(anyInt())).thenReturn(List.of(testEnvelope));
 
         doAnswer(invocation -> {
@@ -124,8 +138,14 @@ class QueueWorkerRunnerTest {
         doThrow(new RuntimeException("DB error")).when(store)
             .finalize(testOpId, OperationState.COMPLETED);
 
+        // ack 호출 시 latch 카운트 다운
+        doAnswer(invocation -> {
+            latch.countDown();
+            return null;
+        }).when(bus).ack(any(Envelope.class));
+
         // when
-        pumpAndWait();
+        pumpAndWait(latch);
 
         // then
         verify(store).writeAhead(eq(testOpId), any(Ok.class));
@@ -140,6 +160,7 @@ class QueueWorkerRunnerTest {
     @Test
     void pump_Retry_처리_시_RetryBudget_남아있으면_재게시됨() throws InterruptedException {
         // given
+        final CountDownLatch latch = new CountDownLatch(1);
         when(bus.dequeue(anyInt())).thenReturn(List.of(testEnvelope));
 
         Retry retry = new Retry("NetworkTimeout", 1, 1000);
@@ -149,8 +170,14 @@ class QueueWorkerRunnerTest {
             return null;
         }).when(executor).execute(testEnvelope);
 
+        // publish 호출 시 latch 카운트 다운
+        doAnswer(invocation -> {
+            latch.countDown();
+            return null;
+        }).when(bus).publish(any(Envelope.class), anyLong());
+
         // when
-        pumpAndWait();
+        pumpAndWait(latch);
 
         // then
         ArgumentCaptor<Long> delayCaptor = ArgumentCaptor.forClass(Long.class);
@@ -169,6 +196,7 @@ class QueueWorkerRunnerTest {
     @Test
     void pump_Retry_처리_시_RetryBudget_소진되면_finalize_FAILED_호출됨() throws InterruptedException {
         // given
+        final CountDownLatch latch = new CountDownLatch(1);
         when(bus.dequeue(anyInt())).thenReturn(List.of(testEnvelope));
 
         // maxRetries=3, attemptCount=3 (예산 소진)
@@ -179,8 +207,14 @@ class QueueWorkerRunnerTest {
             return null;
         }).when(executor).execute(testEnvelope);
 
+        // ack 호출 시 latch 카운트 다운
+        doAnswer(invocation -> {
+            latch.countDown();
+            return null;
+        }).when(bus).ack(any(Envelope.class));
+
         // when
-        pumpAndWait();
+        pumpAndWait(latch);
 
         // then
         verify(bus, never()).publish(any(), anyLong()); // 재게시 안 됨
@@ -195,6 +229,7 @@ class QueueWorkerRunnerTest {
     @Test
     void pump_Fail_처리_시_즉시_finalize_FAILED_호출됨() throws InterruptedException {
         // given
+        final CountDownLatch latch = new CountDownLatch(1);
         when(bus.dequeue(anyInt())).thenReturn(List.of(testEnvelope));
 
         Fail fail = Fail.of("INVALID_INPUT", "Invalid data format");
@@ -204,8 +239,14 @@ class QueueWorkerRunnerTest {
             return null;
         }).when(executor).execute(testEnvelope);
 
+        // ack 호출 시 latch 카운트 다운
+        doAnswer(invocation -> {
+            latch.countDown();
+            return null;
+        }).when(bus).ack(any(Envelope.class));
+
         // when
-        pumpAndWait();
+        pumpAndWait(latch);
 
         // then
         verify(store).finalize(testOpId, OperationState.FAILED);
@@ -216,6 +257,7 @@ class QueueWorkerRunnerTest {
     @Test
     void pump_Fail_처리_시_DLQ_비활성화_상태면_DLQ_전송_안_됨() throws InterruptedException {
         // given
+        final CountDownLatch latch = new CountDownLatch(1);
         QueueWorkerConfig configWithDlqDisabled = config.withDlqEnabled(false);
         runner = new QueueWorkerRunner(bus, store, executor, configWithDlqDisabled);
 
@@ -228,8 +270,14 @@ class QueueWorkerRunnerTest {
             return null;
         }).when(executor).execute(testEnvelope);
 
+        // ack 호출 시 latch 카운트 다운
+        doAnswer(invocation -> {
+            latch.countDown();
+            return null;
+        }).when(bus).ack(any(Envelope.class));
+
         // when
-        pumpAndWait();
+        pumpAndWait(latch);
 
         // then
         verify(store).finalize(testOpId, OperationState.FAILED);
@@ -244,11 +292,18 @@ class QueueWorkerRunnerTest {
     @Test
     void pump_처리_중_예외_발생_시_NACK_호출됨() throws InterruptedException {
         // given
+        final CountDownLatch latch = new CountDownLatch(1);
         when(bus.dequeue(anyInt())).thenReturn(List.of(testEnvelope));
         doThrow(new RuntimeException("Executor error")).when(executor).execute(testEnvelope);
 
+        // nack 호출 시 latch 카운트 다운
+        doAnswer(invocation -> {
+            latch.countDown();
+            return null;
+        }).when(bus).nack(any(Envelope.class));
+
         // when
-        pumpAndWait();
+        pumpAndWait(latch);
 
         // then: 비동기 실행으로 인해 예외는 워커 스레드에서 발생하고,
         // RuntimeException이 throw되어 processEnvelope의 catch 블록에서 NACK 처리됨
@@ -263,6 +318,7 @@ class QueueWorkerRunnerTest {
     @Test
     void pump_여러_Envelope_배치_처리_가능() throws InterruptedException {
         // given
+        final CountDownLatch latch = new CountDownLatch(2); // 2개 메시지
         OpId opId1 = OpId.of("op-1");
         OpId opId2 = OpId.of("op-2");
         Envelope env1 = Envelope.now(opId1, testEnvelope.command());
@@ -270,17 +326,20 @@ class QueueWorkerRunnerTest {
 
         when(bus.dequeue(anyInt())).thenReturn(List.of(env1, env2));
 
-        // 두 작업 모두 Ok로 완료
+        // 두 작업 모두 즉시 COMPLETED 상태로 반환하도록 미리 설정
+        when(executor.getState(opId1)).thenReturn(OperationState.COMPLETED);
+        when(executor.getState(opId2)).thenReturn(OperationState.COMPLETED);
+        when(executor.getOutcome(opId1)).thenReturn(new Ok(opId1, "Success"));
+        when(executor.getOutcome(opId2)).thenReturn(new Ok(opId2, "Success"));
+
+        // ack 호출 시 latch 카운트 다운 (2번 호출됨)
         doAnswer(invocation -> {
-            Envelope env = invocation.getArgument(0);
-            OpId opId = env.opId();
-            when(executor.getState(opId)).thenReturn(OperationState.COMPLETED);
-            when(executor.getOutcome(opId)).thenReturn(new Ok(opId, "Success"));
+            latch.countDown();
             return null;
-        }).when(executor).execute(any());
+        }).when(bus).ack(any(Envelope.class));
 
         // when
-        pumpAndWait();
+        pumpAndWait(latch);
 
         // then
         verify(executor, times(2)).execute(any());
