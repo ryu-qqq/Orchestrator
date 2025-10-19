@@ -446,6 +446,7 @@ public class SqsBus implements Bus {
 
         return response.messages().stream()
             .map(this::deserializeEnvelope)
+            .filter(java.util.Objects::nonNull) // 역직렬화 실패 메시지 제외
             .collect(Collectors.toList());
     }
 
@@ -516,8 +517,12 @@ public class SqsBus implements Bus {
             // OpId와 receiptHandle을 매핑하여 캐시에 저장
             receiptHandleCache.put(envelope.opId(), message.receiptHandle());
             return envelope;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to deserialize envelope", e);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            // 역직렬화 실패 시, 메시지를 DLQ로 보내는 등의 추가 처리 고려
+            // 여기서는 로깅 후 null을 반환하여 스트림 처리가 중단되지 않도록 합니다.
+            // dequeue 메소드에서는 .filter(Objects::nonNull)를 추가해야 합니다.
+            System.err.println("Failed to deserialize SQS message: " + message.body());
+            return null;
         }
     }
 
@@ -560,18 +565,18 @@ dependencies {
 ```java
 package com.example.adapter.protection;
 
+import com.ryuqq.orchestrator.core.model.OpId;
 import com.ryuqq.orchestrator.core.protection.CircuitBreaker;
+import com.ryuqq.orchestrator.core.protection.CircuitBreakerState;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 
 import java.time.Duration;
-import java.util.concurrent.Callable;
 
 public class Resilience4jCircuitBreaker implements CircuitBreaker {
 
-    private final CircuitBreakerRegistry registry;
+    private final io.github.resilience4j.circuitbreaker.CircuitBreaker circuitBreaker;
 
-    public Resilience4jCircuitBreaker() {
+    public Resilience4jCircuitBreaker(String name) {
         CircuitBreakerConfig config = CircuitBreakerConfig.custom()
             .failureRateThreshold(50)                     // 실패율 50% 이상
             .slowCallRateThreshold(50)                     // 느린 호출 50% 이상
@@ -582,28 +587,44 @@ public class Resilience4jCircuitBreaker implements CircuitBreaker {
             .permittedNumberOfCallsInHalfOpenState(5)      // HALF_OPEN 시 5개 테스트
             .build();
 
-        this.registry = CircuitBreakerRegistry.of(config);
+        this.circuitBreaker = io.github.resilience4j.circuitbreaker.CircuitBreaker.of(name, config);
     }
 
     @Override
-    public <T> T call(String resourceKey, Callable<T> supplier) throws Exception {
-        io.github.resilience4j.circuitbreaker.CircuitBreaker cb =
-            registry.circuitBreaker(resourceKey);
-
-        return cb.executeCallable(supplier);
+    public boolean tryAcquire(OpId opId) {
+        return circuitBreaker.tryAcquirePermission();
     }
 
     @Override
-    public State state(String resourceKey) {
-        io.github.resilience4j.circuitbreaker.CircuitBreaker cb =
-            registry.circuitBreaker(resourceKey);
+    public void recordSuccess(OpId opId) {
+        circuitBreaker.onSuccess(
+            System.nanoTime(),
+            java.util.concurrent.TimeUnit.NANOSECONDS
+        );
+    }
 
-        return switch (cb.getState()) {
-            case CLOSED -> State.CLOSED;
-            case OPEN -> State.OPEN;
-            case HALF_OPEN -> State.HALF_OPEN;
-            default -> State.CLOSED;
+    @Override
+    public void recordFailure(OpId opId, Throwable throwable) {
+        circuitBreaker.onError(
+            System.nanoTime(),
+            java.util.concurrent.TimeUnit.NANOSECONDS,
+            throwable
+        );
+    }
+
+    @Override
+    public CircuitBreakerState getState() {
+        return switch (circuitBreaker.getState()) {
+            case CLOSED -> CircuitBreakerState.CLOSED;
+            case OPEN -> CircuitBreakerState.OPEN;
+            case HALF_OPEN -> CircuitBreakerState.HALF_OPEN;
+            default -> CircuitBreakerState.CLOSED;
         };
+    }
+
+    @Override
+    public void reset() {
+        circuitBreaker.reset();
     }
 }
 ```
