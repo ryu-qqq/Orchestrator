@@ -132,6 +132,9 @@ public class QuickStartExample {
         } else if (outcome instanceof Fail) {
             store.finalize(opId, OperationState.FAILED);
             System.out.println("❌ Operation 실패! 상태: FAILED\n");
+        } else if (outcome instanceof Retry) {
+            // 실제 애플리케이션에서는 이 로직이 Bus를 통해 비동기적으로 처리됩니다.
+            System.out.println("⏳ Operation 재시도 필요! 상태: IN_PROGRESS (재시도 예정)\n");
         }
 
         // ===== 8. 최종 상태 확인 =====
@@ -170,6 +173,7 @@ public class QuickStartExample {
             }
 
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // 스레드 중단 상태 복원
             // 일시적 오류 (재시도 가능)
             return new Retry(
                 java.time.Duration.ofSeconds(5),
@@ -288,7 +292,13 @@ if (!state.isTerminal()) {
 ```java
 @GetMapping("/operations/{opId}")
 public ResponseEntity<?> getOperationStatus(@PathVariable String opId) {
-    OpId id = new OpId(UUID.fromString(opId));
+    OpId id;
+    try {
+        id = new OpId(UUID.fromString(opId));
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body("Invalid OpId format");
+    }
+
     OperationState state = store.getState(id);
 
     if (state == OperationState.COMPLETED) {

@@ -185,6 +185,9 @@ public class JpaStore implements Store {
         }
 
         // 멱등성: 기존 WAL이 있으면 업데이트, 없으면 INSERT
+        // Note: 이 로직은 find와 save 사이에 race condition이 발생할 수 있습니다.
+        // 프로덕션 코드에서는 DB의 UPSERT 기능을 사용하거나 DataIntegrityViolationException을
+        // 처리하여 원자성을 보장하는 것이 좋습니다.
         WriteAheadLogEntity existing = walRepo.findByOpId(opId.value());
         if (existing != null) {
             existing.setOutcomeType(wal.getOutcomeType());
@@ -194,7 +197,23 @@ public class JpaStore implements Store {
             existing.setErrorMessage(wal.getErrorMessage());
             walRepo.save(existing);
         } else {
-            walRepo.save(wal);
+            try {
+                walRepo.save(wal);
+            } catch (org.springframework.dao.DataIntegrityViolationException e) {
+                // 동시성 환경에서 다른 스레드가 이미 삽입한 경우
+                // 재조회 후 업데이트 시도
+                existing = walRepo.findByOpId(opId.value());
+                if (existing != null) {
+                    existing.setOutcomeType(wal.getOutcomeType());
+                    existing.setProviderTxnId(wal.getProviderTxnId());
+                    existing.setResultPayload(wal.getResultPayload());
+                    existing.setErrorCode(wal.getErrorCode());
+                    existing.setErrorMessage(wal.getErrorMessage());
+                    walRepo.save(existing);
+                } else {
+                    throw e; // 예상치 못한 경우, 재발생
+                }
+            }
         }
     }
 }
@@ -369,6 +388,7 @@ public class SqsBus implements Bus {
     private final String queueUrl;
     private final String dlqUrl;
     private final ObjectMapper objectMapper;
+    private final Map<OpId, String> receiptHandleCache = new java.util.concurrent.ConcurrentHashMap<>();
 
     public SqsBus(SqsClient sqsClient, String queueUrl, String dlqUrl) {
         this.sqsClient = sqsClient;
@@ -492,16 +512,23 @@ public class SqsBus implements Bus {
 
     private Envelope deserializeEnvelope(Message message) {
         try {
-            return objectMapper.readValue(message.body(), Envelope.class);
+            Envelope envelope = objectMapper.readValue(message.body(), Envelope.class);
+            // OpId와 receiptHandle을 매핑하여 캐시에 저장
+            receiptHandleCache.put(envelope.opId(), message.receiptHandle());
+            return envelope;
         } catch (Exception e) {
             throw new RuntimeException("Failed to deserialize envelope", e);
         }
     }
 
     private String getReceiptHandle(Envelope envelope) {
-        // 실제 구현에서는 Envelope에 receipt handle을 metadata로 저장하거나
-        // 별도 캐시에서 OpId → Receipt Handle 매핑 필요
-        throw new UnsupportedOperationException("Receipt handle mapping not implemented");
+        // 캐시에서 receiptHandle을 조회하고 사용 후 제거
+        String receiptHandle = receiptHandleCache.remove(envelope.opId());
+        if (receiptHandle == null) {
+            throw new IllegalStateException("Receipt handle not found for OpId: " + envelope.opId() +
+                ". It might have been already processed or expired.");
+        }
+        return receiptHandle;
     }
 }
 ```
@@ -611,7 +638,7 @@ public class Resilience4jRateLimiter implements RateLimiter {
         io.github.resilience4j.ratelimiter.RateLimiter limiter =
             registry.rateLimiter(resourceKey);
 
-        return limiter.acquirePermission();
+        return limiter.tryAcquirePermission(1, maxWait);
     }
 }
 ```
