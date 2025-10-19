@@ -116,12 +116,8 @@ class TimeBudgetContractTest extends AbstractContractTest {
         long elapsedTime = System.currentTimeMillis() - startTime;
 
         // Then: should be within budget (200 OK)
-        boolean shouldReturnSync = elapsedTime < TIME_BUDGET_MS;
-
-        if (shouldReturnSync) {
-            assertTrue(elapsedTime < TIME_BUDGET_MS,
-                    "Boundary case: should complete within budget");
-        }
+        assertTrue(elapsedTime < TIME_BUDGET_MS,
+                "Boundary case: should complete within budget");
 
         assertOperationState(opId, OperationState.COMPLETED);
     }

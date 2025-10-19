@@ -64,7 +64,7 @@ public class InMemoryStore implements Store {
      * {@inheritDoc}
      */
     @Override
-    public void finalize(OpId opId, OperationState state) {
+    public synchronized void finalize(OpId opId, OperationState state) {
         if (opId == null) {
             throw new IllegalArgumentException("opId cannot be null");
         }
@@ -82,7 +82,7 @@ public class InMemoryStore implements Store {
 
         // Check if already finalized
         OperationState currentState = operations.get(opId);
-        if (currentState == OperationState.COMPLETED || currentState == OperationState.FAILED) {
+        if (currentState != null && currentState.isTerminal()) {
             throw new IllegalStateException("Operation already finalized with state: " + currentState);
         }
 
@@ -226,7 +226,7 @@ public class InMemoryStore implements Store {
         // Check for backward transition prohibition
         OperationState currentState = operations.get(opId);
         if (currentState != null) {
-            if (currentState == OperationState.COMPLETED || currentState == OperationState.FAILED) {
+            if (currentState.isTerminal()) {
                 if (state == OperationState.IN_PROGRESS) {
                     throw new IllegalStateException(
                             String.format("Cannot transition from terminal state %s to %s for opId: %s",
