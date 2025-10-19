@@ -219,8 +219,8 @@ Result: {"status": "cancelled", "refund_amount": 10000}
 ```java
 import com.ryuqq.orchestrator.core.statemachine.OperationState;
 
-// Operation 상태 확인
-OpId opId = handle.opId();
+// Operation 상태 확인 (이전 단계에서 생성된 OpId를 사용합니다)
+OpId opId = ...; // 2단계에서 생성한 OpId
 OperationState state = store.getState(opId);
 
 System.out.println("📌 현재 상태: " + state);
@@ -256,8 +256,8 @@ System.out.println("🎯 최종 Outcome: " + outcome);
 ### 다음 학습 내용
 
 1. **[어댑터 구현 가이드](./02-adapter-implementation.md)**: 실제 DB/Message Queue 어댑터 구현 방법
-2. **[정책 설정 가이드](./03-policy-configuration.md)**: Retry, Idempotency, Transition, TimeBudget 설정
-3. **[운영 가이드](./04-operations.md)**: 관측성, 알람, 백프레셔 설정
+2. **정책 설정 가이드 (작성 예정)**: Retry, Idempotency, Transition, TimeBudget 설정
+3. **운영 가이드 (작성 예정)**: 관측성, 알람, 백프레셔 설정
 
 ---
 

@@ -51,7 +51,7 @@ CREATE INDEX idx_operations_idem_key ON operations(idempotency_key);
 -- Write-Ahead Log 테이블
 CREATE TABLE write_ahead_log (
     id BIGSERIAL PRIMARY KEY,
-    op_id UUID NOT NULL REFERENCES operations(id),
+    op_id UUID NOT NULL UNIQUE REFERENCES operations(id),
     outcome_type VARCHAR(20) NOT NULL CHECK (outcome_type IN ('OK', 'RETRY', 'FAIL')),
     provider_txn_id VARCHAR(255),
     result_payload JSONB,
@@ -650,8 +650,8 @@ public class Resilience4jRateLimiter implements RateLimiter {
 이제 실제 인프라로 Orchestrator SDK를 통합할 수 있습니다!
 
 **다음 단계**:
-- [정책 설정 가이드](./03-policy-configuration.md): Retry, Idempotency, Transition 정책 설정
-- [운영 가이드](./04-operations.md): 관측성, 알람, 백프레셔 설정
+- 정책 설정 가이드 (작성 예정): Retry, Idempotency, Transition 정책 설정
+- 운영 가이드 (작성 예정): 관측성, 알람, 백프레셔 설정
 
 **체크리스트**:
 - [ ] Store 구현 완료 (writeAhead, finalize, scanWA, scanInProgress)
