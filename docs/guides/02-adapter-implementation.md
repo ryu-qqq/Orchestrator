@@ -388,6 +388,16 @@ public class SqsBus implements Bus {
     private final String queueUrl;
     private final String dlqUrl;
     private final ObjectMapper objectMapper;
+
+    // ⚠️ PRODUCTION WARNING: This simple ConcurrentHashMap-based cache can cause memory leaks
+    // if ack/nack is not called (e.g., application crash, network timeout).
+    // For production environments, use a cache with TTL expiration policy such as:
+    // - Google Guava Cache with expireAfterWrite()
+    // - Caffeine Cache with expireAfterWrite()
+    // - Redis with TTL
+    // Example: Cache<OpId, String> cache = CacheBuilder.newBuilder()
+    //              .expireAfterWrite(10, TimeUnit.MINUTES)
+    //              .build();
     private final Map<OpId, String> receiptHandleCache = new java.util.concurrent.ConcurrentHashMap<>();
 
     public SqsBus(SqsClient sqsClient, String queueUrl, String dlqUrl) {
@@ -521,6 +531,12 @@ public class SqsBus implements Bus {
             // 역직렬화 실패 시, 메시지를 DLQ로 보내는 등의 추가 처리 고려
             // 여기서는 로깅 후 null을 반환하여 스트림 처리가 중단되지 않도록 합니다.
             // dequeue 메소드에서는 .filter(Objects::nonNull)를 추가해야 합니다.
+
+            // BEST PRACTICE: Use structured logging framework (e.g., SLF4J) instead of System.err
+            // Example with SLF4J:
+            // private static final Logger log = LoggerFactory.getLogger(SqsBus.class);
+            // log.error("Failed to deserialize SQS message: {}", message.body(), e);
+
             System.err.println("Failed to deserialize SQS message: " + message.body());
             return null;
         }
