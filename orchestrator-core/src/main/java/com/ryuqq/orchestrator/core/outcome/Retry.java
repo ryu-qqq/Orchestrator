@@ -41,4 +41,17 @@ public record Retry(
             throw new IllegalArgumentException("nextRetryAfterMillis must be non-negative (current: " + nextRetryAfterMillis + ")");
         }
     }
+
+    /**
+     * 재시도 결과 생성.
+     *
+     * @param reason 재시도 사유
+     * @param attemptCount 현재까지 시도 횟수
+     * @param nextRetryAfterMillis 다음 재시도까지 대기 시간 (밀리초)
+     * @return Retry 인스턴스
+     * @throws IllegalArgumentException 유효하지 않은 값인 경우
+     */
+    public static Retry of(String reason, int attemptCount, long nextRetryAfterMillis) {
+        return new Retry(reason, attemptCount, nextRetryAfterMillis);
+    }
 }

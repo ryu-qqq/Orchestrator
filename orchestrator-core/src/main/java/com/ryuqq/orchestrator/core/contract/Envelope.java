@@ -55,6 +55,19 @@ public record Envelope(
     }
 
     /**
+     * Envelope 생성 (명시적 시각 지정).
+     *
+     * @param opId Operation ID
+     * @param command Command
+     * @param acceptedAt 요청 수락 시각 (epoch milliseconds)
+     * @return 생성된 Envelope
+     * @throws IllegalArgumentException opId 또는 command가 null이거나 acceptedAt이 음수인 경우
+     */
+    public static Envelope of(OpId opId, Command command, long acceptedAt) {
+        return new Envelope(opId, command, acceptedAt);
+    }
+
+    /**
      * 현재 시각으로 Envelope 생성.
      *
      * @param opId Operation ID

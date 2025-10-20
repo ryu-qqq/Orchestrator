@@ -51,7 +51,7 @@ try {
 }
 
 // After: Orchestrator가 모든 복잡성 처리
-Command command = new Command(domain, eventType, bizKey, payload, idemKey);
+Command command = Command.of(domain, eventType, bizKey, idemKey, payload);
 OperationHandle handle = orchestrator.start(command, timeBudget);
 // → 상태머신, 멱등성, 재시도, WAL 모두 자동 처리
 ```
@@ -101,12 +101,12 @@ dependencies {
 
 ```java
 // 1. Command 생성
-Command command = new Command(
-    new Domain("payments"),
-    new EventType("PAYMENT.CANCEL.REQUEST"),
-    new BizKey("payment-12345"),
-    new Payload("{\"reason\": \"customer_request\"}"),
-    new IdemKey("idem-abc-123")  // 멱등성 보장
+Command command = Command.of(
+    Domain.of("payments"),
+    EventType.of("PAYMENT.CANCEL.REQUEST"),
+    BizKey.of("payment-12345"),
+    IdemKey.of("idem-abc-123"),  // 멱등성 보장
+    Payload.of("{\"reason\": \"customer_request\"}")
 );
 
 // 2. Operation 시작

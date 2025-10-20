@@ -31,6 +31,18 @@ public record Ok(
     }
 
     /**
+     * 성공 결과 생성 (메시지 포함).
+     *
+     * @param opId Operation ID
+     * @param message 성공 메시지
+     * @return Ok 인스턴스
+     * @throws IllegalArgumentException opId가 null인 경우
+     */
+    public static Ok of(OpId opId, String message) {
+        return new Ok(opId, message);
+    }
+
+    /**
      * 메시지 없이 성공 결과 생성.
      *
      * @param opId Operation ID

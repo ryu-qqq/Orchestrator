@@ -42,6 +42,19 @@ public record Fail(
     }
 
     /**
+     * Fail 생성 (cause 포함).
+     *
+     * @param errorCode 오류 코드
+     * @param message 오류 메시지
+     * @param cause 원인
+     * @return Fail 인스턴스
+     * @throws IllegalArgumentException errorCode 또는 message가 null이거나 빈 문자열인 경우
+     */
+    public static Fail of(String errorCode, String message, String cause) {
+        return new Fail(errorCode, message, cause);
+    }
+
+    /**
      * cause 없이 Fail 생성.
      *
      * @param errorCode 오류 코드

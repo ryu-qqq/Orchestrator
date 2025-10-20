@@ -23,7 +23,7 @@ import com.ryuqq.orchestrator.core.model.Payload;
  *
  * <p><strong>예시:</strong></p>
  * <pre>
- * Command command = new Command(
+ * Command command = Command.of(
  *     Domain.of("ORDER"),
  *     EventType.of("CREATE"),
  *     BizKey.of("ORDER-123"),
@@ -68,5 +68,26 @@ public record Command(
             throw new IllegalArgumentException("idemKey cannot be null");
         }
         // payload는 null 허용
+    }
+
+    /**
+     * Command 인스턴스를 생성하는 static factory method.
+     *
+     * @param domain 업무 도메인
+     * @param eventType 이벤트 유형
+     * @param bizKey 업무 엔티티 식별자
+     * @param idemKey 멱등성 키
+     * @param payload 업무 데이터 (null 가능)
+     * @return Command 인스턴스
+     * @throws IllegalArgumentException 필수 필드가 null인 경우
+     */
+    public static Command of(
+        Domain domain,
+        EventType eventType,
+        BizKey bizKey,
+        IdemKey idemKey,
+        Payload payload
+    ) {
+        return new Command(domain, eventType, bizKey, idemKey, payload);
     }
 }
