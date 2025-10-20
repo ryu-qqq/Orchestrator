@@ -1,0 +1,14 @@
+# JitPack Configuration for Orchestrator Core SDK
+
+# Java 21 toolchain requirement
+jdk:
+  - openjdk21
+
+# Build command (default is ./gradlew build publishToMavenLocal)
+# We use the default, but explicitly specify for clarity
+before_install:
+  - sdk install java 21.0.1-tem || true
+  - sdk use java 21.0.1-tem
+
+install:
+  - ./gradlew clean build publishToMavenLocal -x test

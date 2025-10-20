@@ -1,301 +1,298 @@
-# Spring Standards Project - Claude Code Configuration
+# CLAUDE.md
 
-이 프로젝트는 **Spring Boot 3.5.x + Java 21** 기반의 헥사고날 아키텍처 엔터프라이즈 표준 프로젝트입니다.
-
----
-
-## 🚀 혁신: Dynamic Hooks + Cache 시스템
-
-이 프로젝트의 핵심 차별점은 **AI 기반 자동 규칙 주입 및 실시간 검증 시스템**입니다.
-
-### 시스템 아키텍처
-
-```
-docs/coding_convention/ (90개 마크다운 규칙)
-         ↓
-build-rule-cache.py (Cache 빌드)
-         ↓
-.claude/cache/rules/ (90개 JSON + index.json)
-         ↓
-user-prompt-submit.sh (키워드 감지 → Layer 매핑)
-         ↓
-inject-rules.py (Layer별 규칙 자동 주입)
-         ↓
-Claude Code (규칙 준수 코드 생성)
-         ↓
-after-tool-use.sh (생성 직후 검증)
-         ↓
-validation-helper.py (Cache 기반 실시간 검증)
-```
-
-### 성능 메트릭
-
-| 메트릭 | 기존 방식 | Cache 시스템 | 개선율 |
-|--------|----------|-------------|--------|
-| 토큰 사용량 | 50,000 | 500-1,000 | **90% 절감** |
-| 검증 속도 | 561ms | 148ms | **73.6% 향상** |
-| 문서 로딩 | 2-3초 | <100ms | **95% 향상** |
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ---
 
-## 📚 코딩 규칙 (docs/coding_convention/)
+## 프로젝트 개요
 
-### 레이어별 규칙 구조
+**Orchestrator Core SDK**는 외부 API 호출(결제, 파일, 써드파티 등)을 수반하는 업무 플로우에서 **업무 원자성**과 **최종 일관성**을 보장하는 헥사고날 기반 Core-only 프레임워크입니다.
 
-```
-docs/coding_convention/
-├── 01-adapter-rest-api-layer/  (18개 규칙)
-│   ├── controller-design/
-│   ├── dto-patterns/
-│   ├── exception-handling/
-│   ├── mapper-patterns/
-│   ├── package-guide/
-│   └── testing/
-│
-├── 02-domain-layer/  (15개 규칙)
-│   ├── aggregate-design/
-│   ├── law-of-demeter/  ⭐ Law of Demeter 엄격 적용
-│   ├── package-guide/
-│   └── testing/
-│
-├── 03-application-layer/  (18개 규칙)
-│   ├── assembler-pattern/
-│   ├── dto-patterns/
-│   ├── package-guide/
-│   ├── testing/
-│   ├── transaction-management/  ⭐ Transaction 경계 엄격 관리
-│   └── usecase-design/
-│
-├── 04-persistence-layer/  (10개 규칙)
-│   ├── jpa-entity-design/  ⭐ Long FK 전략 (관계 어노테이션 금지)
-│   ├── package-guide/
-│   ├── querydsl-optimization/
-│   ├── repository-patterns/
-│   └── testing/
-│
-├── 05-testing/  (12개 규칙)
-│   ├── archunit-rules/
-│   └── integration-testing/
-│
-├── 06-java21-patterns/  (8개 규칙)
-│   ├── record-patterns/
-│   ├── sealed-classes/
-│   └── virtual-threads/
-│
-├── 07-enterprise-patterns/  (5개 규칙)
-│   ├── caching/
-│   ├── event-driven/
-│   └── resilience/
-│
-└── 08-error-handling/  (5개 규칙)
-    ├── error-handling-strategy/
-    ├── domain-exception-design/
-    ├── global-exception-handler/
-    ├── error-response-format/
-    └── errorcode-management/
-```
-
-**총 90개 규칙 → JSON Cache로 변환 → O(1) 검색 및 주입**
+### 핵심 철학
+- **헥사고날 아키텍처**: Core는 순수 Java로 구체 기술(JPA/Kafka/SQS 등) 미포함
+- **Port & Adapter 패턴**: SPI 계약만 정의, 구현은 어댑터에서 담당
+- **강한 계약**: 상태머신, 멱등성, 시간/재시도 예산 기반 안전성 보장
+- **3단계 수명주기**: S1(수락) → S2(실행) → S3(종결)
 
 ---
 
-## 🏗️ 프로젝트 핵심 원칙
+## 빌드 및 테스트
 
-### 1. 아키텍처 패턴
-- **헥사고날 아키텍처** (Ports & Adapters) - 의존성 역전
-- **도메인 주도 설계** (DDD) - Aggregate 중심 설계
-- **CQRS** - Command/Query 분리
-
-### 2. 코드 품질 규칙 (Zero-Tolerance)
-- **Lombok 금지** - Plain Java 사용 (Domain layer에서 특히 엄격)
-- **Law of Demeter** - Getter 체이닝 금지 (`order.getCustomer().getAddress()` ❌)
-- **Long FK 전략** - JPA 관계 어노테이션 금지, Long userId 사용
-- **Transaction 경계** - `@Transactional` 내 외부 API 호출 절대 금지
-
-### 3. Spring 프록시 제약사항 (중요!)
-⚠️ **다음 경우 `@Transactional`이 작동하지 않습니다:**
-- Private 메서드
-- Final 클래스/메서드
-- 같은 클래스 내부 호출 (`this.method()`)
-
----
-
-## 🔧 자동화 시스템
-
-### 1. Dynamic Hooks + Cache 
-
-**위치**: `.claude/hooks/`, `.claude/cache/`, `.claude/commands/lib/`
-
-#### Cache 빌드
+### 빌드
 ```bash
-# 90개 마크다운 → 90개 JSON + index.json (약 5초)
-python3 .claude/hooks/scripts/build-rule-cache.py
+./gradlew build
 ```
 
-#### 자동 규칙 주입 (user-prompt-submit.sh)
-- **키워드 감지**: "domain", "usecase", "controller", "entity" 등
-- **Layer 매핑**: domain, application, adapter-rest, adapter-persistence
-- **inject-rules.py 호출**: Layer별 JSON 규칙 자동 주입
-
-#### 실시간 검증 (after-tool-use.sh)
-- **코드 생성 직후 검증**: Write/Edit 도구 사용 후 즉시 실행
-- **validation-helper.py 호출**: Cache 기반 고속 검증
-- **위반 시 경고**: 구체적인 수정 방법 제시
-
-### 2. Slash Commands
-
-**코드 생성**:
-- `/code-gen-domain <name>` - Domain Aggregate 생성 (규칙 자동 주입 + 검증)
-- `/code-gen-usecase <name>` - Application UseCase 생성
-- `/code-gen-controller <name>` - REST Controller 생성
-
-**검증**:
-- `/validate-domain <file>` - Domain layer 파일 검증
-- `/validate-architecture [dir]` - 전체 또는 특정 모듈 아키텍처 검증
-
-**기타**:
-- `/gemini-review [pr-number]` - Gemini 코드 리뷰 분석
-- `/jira-task` - Jira 태스크 분석 및 브랜치 생성
-
-### 3. Git Pre-commit Hooks (별도 시스템)
-
-**위치**: `hooks/pre-commit`, `hooks/validators/`
-
-- **트랜잭션 경계 검증**: `@Transactional` 내 외부 API 호출 차단
-- **프록시 제약사항 검증**: Private/Final 메서드 `@Transactional` 차단
-- **최종 안전망 역할**: 커밋 시 강제 검증
-
-### 4. ArchUnit Tests
-
-**위치**: `application/src/test/java/com/company/template/architecture/`
-
-- **아키텍처 규칙 자동 검증**: 레이어 의존성, 네이밍 규칙
-- **빌드 시 자동 실행**: 위반 시 빌드 실패
-
----
-
-## 🎯 개발 워크플로우 (Cache 시스템 활용)
-
-### 1. 코드 생성 워크플로우
-
+### 테스트
 ```bash
-# 1. Slash Command로 코드 생성 (자동 규칙 주입)
-/code-gen-domain Order
+# 전체 테스트
+./gradlew test
 
-# 2. 자동 실행 흐름:
-#    - inject-rules.py: Domain layer 규칙 주입
-#    - Claude: 규칙 준수 코드 생성
-#    - after-tool-use.sh: 즉시 검증
-#    - validation-helper.py: Cache 기반 검증
+# 특정 모듈 테스트
+./gradlew :orchestrator-core:test
+./gradlew :orchestrator-testkit:test
 
-# 3. 검증 결과 확인
-# ✅ Validation Passed: 모든 규칙 준수
-# ❌ Validation Failed: 위반 규칙 상세 표시
+# 커버리지 리포트 생성
+./gradlew jacocoTestReport
+# 결과: build/reports/jacoco/test/html/index.html
 ```
 
-### 2. 수동 검증 워크플로우
-
+### 단일 테스트 실행
 ```bash
-# 특정 파일 검증
-/validate-domain domain/src/main/java/.../Order.java
+# JUnit 5 패턴 기반
+./gradlew test --tests "클래스명"
+./gradlew test --tests "*패턴*"
 
-# 전체 프로젝트 검증
-/validate-architecture
-
-# 특정 모듈만 검증
-/validate-architecture domain
+# 예시
+./gradlew :orchestrator-core:test --tests "OpIdTest"
+./gradlew :orchestrator-testkit:test --tests "*Contract*"
 ```
 
-### 3. Cache 업데이트 워크플로우
+---
 
+## 프로젝트 구조 (멀티모듈)
+
+```
+orchestrator/
+├── orchestrator-core/              # 핵심 SDK (순수 Java, 의존성 없음)
+│   ├── api/                        # 공개 API (Orchestrator, Executor, Runtime)
+│   ├── model/                      # 타입 모델 (OpId, Command, Envelope 등)
+│   ├── outcome/                    # 실행 결과 (Ok, Retry, Fail)
+│   ├── contract/                   # 계약 타입
+│   ├── spi/                        # SPI 인터페이스 (Store, Bus, Protection)
+│   ├── statemachine/               # 상태 전이 규칙
+│   └── protection/                 # 보호 정책 (Circuit Breaker, Rate Limiter 등)
+│
+├── orchestrator-application/       # 애플리케이션 계층 (Runner 골격)
+│
+├── orchestrator-adapter-runner/    # Runner 구현체
+│
+├── orchestrator-testkit/           # Contract Tests (어댑터 적합성 검증)
+│   └── contracts/                  # 7가지 시나리오 테스트
+│
+└── orchestrator-adapter-inmemory/  # 레퍼런스 어댑터 (In-Memory 구현)
+    ├── store/                      # InMemoryStore 구현
+    └── bus/                        # InMemoryBus 구현
+```
+
+### 모듈 간 의존성 규칙
+- **orchestrator-core**: 외부 의존성 **절대 금지** (순수 Java 21만 사용)
+- **orchestrator-testkit**: core만 의존
+- **orchestrator-adapter-***: core + testkit 의존 허용
+- **orchestrator-application**: core 의존
+
+---
+
+## 핵심 아키텍처 개념
+
+### 1. 타입 모델 (Value Objects - Java Records)
+모든 도메인 타입은 **불변 Records**로 정의됩니다:
+
+```java
+record OpId(UUID value) {}           // Operation ID
+record BizKey(String value) {}       // 비즈니스 키 (파티션 키)
+record IdemKey(String value) {}      // 멱등성 키
+record Domain(String value) {}       // 도메인 (예: "payment", "order")
+record EventType(String value) {}    // 이벤트 타입
+record Payload(String json) {}       // JSON 페이로드
+
+record Command(Domain d, EventType t, BizKey k, Payload p, IdemKey idem) {}
+record Envelope(OpId opId, Command cmd, long seq) {} // 순서 보장용
+```
+
+### 2. 핵심 API (3개 인터페이스)
+
+```java
+// 1. Orchestrator: 업무 시작점 (S1 - 수락)
+interface Orchestrator {
+    OperationHandle start(Command c, Duration timeBudget);
+}
+
+// 2. Executor: 실제 비즈니스 로직 실행 (S2 - 실행)
+interface Executor {
+    Outcome execute(Envelope env, Headers h);
+}
+
+// 3. Runtime: 큐→실행→종결 루프 골격 (S3 - 종결)
+interface Runtime {
+    void pump(Domain d, Executor ex);
+}
+```
+
+### 3. SPI (Service Provider Interface) - 어댑터 구현 필수
+
+```java
+// Store SPI: 영속성 계약
+interface Store {
+    OpId accept(Command c);           // S1: 멱등 수락
+    boolean finalize(OpId id, ...);   // S3: 종결 (COMPLETED/FAILED)
+    void writeAhead(...);             // WAL 기록
+}
+
+// Bus SPI: 메시징 계약
+interface Bus {
+    void publish(...);                // at-least-once 발행
+    void consume(...);                // 구독
+}
+
+// Protection SPI: 보호 정책 (Circuit Breaker, Rate Limiter 등)
+interface CircuitBreaker { ... }
+interface RateLimiter { ... }
+```
+
+### 4. 상태 전이 규칙 (State Machine)
+
+```
+IN_PROGRESS → EXECUTING → COMPLETED (성공)
+            → EXECUTING → IN_PROGRESS (재시도)
+            → FAILED (실패)
+```
+
+**핵심 제약**:
+- 상태 전이는 **허용된 경로만** 가능 (StateTransition 검증)
+- 모든 전이는 **멱등적**이어야 함
+- 최종 상태(COMPLETED/FAILED)는 **불변**
+
+---
+
+## 코딩 규칙 (Zero-Tolerance)
+
+### 1. Lombok 절대 금지
+- ❌ `@Data`, `@Builder`, `@Getter`, `@Setter` 등 모든 Lombok 어노테이션
+- ✅ Java 21 Records 또는 Plain Java 사용
+
+### 2. Records 사용 원칙
+- 모든 Value Object는 **불변 Records**로 정의
+- Validation은 **Compact Constructor**에서 수행
+- 예시:
+```java
+public record OpId(UUID value) {
+    public OpId {
+        if (value == null) {
+            throw new IllegalArgumentException("OpId cannot be null");
+        }
+    }
+}
+```
+
+### 3. SPI 구현 규칙
+- Core 모듈은 **구체 기술 의존성 절대 금지**
+- SPI 구현은 **반드시 어댑터 모듈**에서
+- NoOp 구현 (기본값)은 `protection/noop/` 패키지에 제공
+
+### 4. 상태 전이 검증
+- 모든 상태 변경은 `StateTransition.isValid()` 검증 필수
+- 허용되지 않은 전이 시 `IllegalStateException` 발생
+
+### 5. 멱등성 보장
+- 모든 write 연산은 **멱등적**이어야 함
+- `IdemKey` 기반 중복 요청 처리
+- Store 구현에서 멱등성 검사 필수
+
+### 6. Javadoc 필수
+- 모든 **public 인터페이스/클래스**에 Javadoc 필수
+- SPI 계약은 특히 상세히 작성 (구현 가이드 포함)
+
+---
+
+## 테스트 전략
+
+### 1. Contract Tests (orchestrator-testkit)
+어댑터 구현 적합성을 자동 검증하는 **7가지 시나리오**:
+
+1. 멱등성 수락 (동일 IdemKey 재입력)
+2. 정상 종결 (COMPLETED)
+3. 실패 종결 (FAILED)
+4. 재시도 플로우
+5. WAL 스캔
+6. 시간 예산 초과
+7. 상태 전이 검증
+
+### 2. 어댑터 테스트 패턴
+```java
+// 어댑터 구현 후 Contract Tests 상속
+class MyStoreAdapterTest extends StoreContractTest {
+    @Override
+    protected Store createStore() {
+        return new MyStoreAdapter();
+    }
+}
+```
+
+### 3. 단위 테스트 기본 스택
+- **JUnit 5**: Platform & Jupiter
+- **AssertJ**: Fluent assertions
+- **Mockito**: Mocking framework
+
+---
+
+## 중요 제약사항
+
+### 1. Core 모듈 순수성
+- `orchestrator-core`는 **순수 Java 21만 사용**
+- Spring, JPA, Kafka 등 **어떤 프레임워크도 의존 금지**
+- 외부 라이브러리는 `org.jetbrains:annotations` (compileOnly) 만 허용
+
+### 2. 헥사고날 경계 준수
+- Core → Adapter 의존 **절대 금지**
+- Adapter → Core 의존만 허용
+- 모든 구체 기술은 **어댑터에서만** 구현
+
+### 3. 버전 관리
+- Java: **21** (toolchain 고정)
+- Gradle: **8.5**
+- JUnit: **5.10.1**
+
+---
+
+## 참고 문서
+
+### 설계 문서
+- [Orchestrator 전체 설계 가이드](../Orchestrator_guide.md)
+- [PRD 문서](../docs/prd/) - Epic별 상세 요구사항
+
+### 가이드
+- [Quick Start 가이드](../docs/guides/01-quick-start.md) - 30분 내 첫 Operation 실행
+- [어댑터 구현 가이드](../docs/guides/02-adapter-implementation.md) - Store/Bus 어댑터 구현
+
+### Jira 프로젝트
+- **프로젝트 키**: OR
+- **주요 에픽**:
+  - OR-1: Core API 및 계약 구현
+  - OR-6: 테스트킷 (Contract Tests) 구현
+  - OR-9: 문서 및 개발자 가이드
+  - OR-12: 레퍼런스 어댑터 구현
+
+---
+
+## 개발 워크플로우
+
+### 1. 새로운 SPI 추가 시
 ```bash
-# 1. 규칙 문서 수정
-vim docs/coding_convention/02-domain-layer/law-of-demeter/01_getter-chaining-prohibition.md
-
-# 2. Cache 재빌드
-python3 .claude/hooks/scripts/build-rule-cache.py
-
-# 3. 확인
-cat .claude/cache/rules/domain-layer-law-of-demeter-01_getter-chaining-prohibition.json
+# 1. Core에 인터페이스 정의 (orchestrator-core/src/main/java/com/ryuqq/orchestrator/core/spi/)
+# 2. Contract Test 작성 (orchestrator-testkit/src/main/java/com/ryuqq/orchestrator/testkit/contracts/)
+# 3. NoOp 구현 제공 (선택적)
+# 4. 레퍼런스 어댑터 구현 (orchestrator-adapter-inmemory/)
+# 5. Contract Test 통과 확인
+./gradlew :orchestrator-adapter-inmemory:test
 ```
 
----
+### 2. 어댑터 구현 시
+```bash
+# 1. Core 의존성 추가
+# 2. SPI 인터페이스 구현
+# 3. Contract Test 상속 및 실행
+# 4. 통합 테스트 작성
+```
 
-## 🚨 Zero-Tolerance 규칙
-
-다음 규칙은 **예외 없이** 반드시 준수해야 합니다:
-
-### 1. Lombok 금지
-- ❌ `@Data`, `@Builder`, `@Getter`, `@Setter` 등 모두 금지
-- ✅ Pure Java getter/setter 직접 작성
-- **검증**: validation-helper.py가 자동 감지
-
-### 2. Law of Demeter (Getter 체이닝 금지)
-- ❌ `order.getCustomer().getAddress().getZip()`
-- ✅ `order.getCustomerZipCode()` (Tell, Don't Ask)
-- **검증**: Anti-pattern 정규식 매칭
-
-### 3. Long FK 전략 (JPA 관계 금지)
-- ❌ `@ManyToOne`, `@OneToMany`, `@OneToOne`, `@ManyToMany`
-- ✅ `private Long userId;` (Long FK 사용)
-- **검증**: JPA 관계 어노테이션 감지
-
-### 4. Transaction 경계
-- ❌ `@Transactional` 내 외부 API 호출 (RestTemplate, WebClient 등)
-- ✅ 트랜잭션은 짧게 유지, 외부 호출은 트랜잭션 밖에서
-- **검증**: Git pre-commit hook
-
-### 5. Javadoc 필수
-- ❌ `@author`, `@since` 없는 public 클래스/메서드
-- ✅ 모든 public 클래스/메서드에 Javadoc 포함
-- **검증**: Checkstyle
-
-### 6. Scope 준수
-- ❌ 요청하지 않은 추가 기능 구현
-- ✅ 요청된 코드만 정확히 작성
-- **검증**: 수동 코드 리뷰
-
----
-
-## 📖 참고 문서
-
-### 튜토리얼
-- [Getting Started](../docs/tutorials/01-getting-started.md) - 시작 가이드 (5분)
-
-### Dynamic Hooks 시스템
-- [DYNAMIC_HOOKS_GUIDE.md](../docs/DYNAMIC_HOOKS_GUIDE.md) - 전체 시스템 가이드
-- [Cache README](./.claude/cache/rules/README.md) - Cache 시스템 상세
-- [Validation Helper](./hooks/scripts/validation-helper.py) - 검증 엔진
-
-### Slash Commands
-- [Commands README](./commands/README.md) - 모든 명령어 설명
-- [Code Gen Domain](./commands/code-gen-domain.md) - Domain 생성
-- [Validate Domain](./commands/validate-domain.md) - Domain 검증
-
-### 코딩 규칙
-- [Coding Convention](../docs/coding_convention/) - 90개 규칙 (Layer별)
-
----
-
-## 🎓 학습 경로
-
-### Day 1: 시스템 이해
-1. README.md 읽기 (프로젝트 개요)
-2. docs/tutorials/01-getting-started.md (실습)
-3. Cache 빌드 및 첫 코드 생성 테스트
-
-### Week 1: 핵심 규칙 숙지
-1. Domain Layer 규칙 (Law of Demeter, Lombok 금지)
-2. Application Layer 규칙 (Transaction 경계)
-3. Persistence Layer 규칙 (Long FK 전략)
-
-### Month 1: 고급 패턴
-1. DDD Aggregate 설계
-2. CQRS 패턴 적용
-3. Event-Driven Architecture
+### 3. PR 전 체크리스트
+- [ ] `./gradlew build` 성공
+- [ ] `./gradlew test` 모두 통과
+- [ ] `./gradlew jacocoTestReport` - 커버리지 확인
+- [ ] Javadoc 누락 없음 (public API/SPI)
+- [ ] Lombok 미사용 확인
+- [ ] 상태 전이 규칙 준수
 
 ---
 
 **✅ 이 프로젝트의 모든 코드는 위 표준을 따라야 합니다.**
-
-**💡 핵심**: Dynamic Hooks + Cache 시스템이 자동으로 규칙을 주입하고 검증하므로, 개발자는 비즈니스 로직에 집중할 수 있습니다!
