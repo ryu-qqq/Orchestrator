@@ -545,15 +545,9 @@ class JpaStoreContractTest extends StoreContractTest {
 ```
 MIT License
 
-Copyright (c) 2024 Orchestrator Team
+Copyright (c) 2024 ryu-qqq
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction...
 ```
-
----
-
-<p align="center">
-  Made with ❤️ by Orchestrator Team
-</p>
