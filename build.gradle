@@ -66,4 +66,42 @@ subprojects {
         options.encoding = 'UTF-8'
         options.addStringOption('Xdoclint:none', '-quiet')
     }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+
+                // Artifact ID는 프로젝트 이름 사용
+                artifactId = project.name
+
+                // POM 메타데이터
+                pom {
+                    name = project.name
+                    description = 'Orchestrator Core SDK - Hexagonal Architecture based Transaction Orchestration Framework'
+                    url = 'https://github.com/ryu-qqq/Orchestrator'
+
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://github.com/ryu-qqq/Orchestrator/blob/main/LICENSE'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'ryu-qqq'
+                            name = 'Orchestrator Team'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:git://github.com/ryu-qqq/Orchestrator.git'
+                        developerConnection = 'scm:git:ssh://github.com/ryu-qqq/Orchestrator.git'
+                        url = 'https://github.com/ryu-qqq/Orchestrator'
+                    }
+                }
+            }
+        }
+    }
 }
